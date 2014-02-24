@@ -1,4 +1,4 @@
 name: patg.net 
 markdown: redcarpet
 pygments: true
-baseurl: /patg.net
+#baseurl: /patg.net
