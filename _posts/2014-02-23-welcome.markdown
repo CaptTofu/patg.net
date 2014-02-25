@@ -5,8 +5,6 @@ date: 2014-02-22 08:00:00
 categories: docker
 ---
 
-Welcome to patg.net! 
-
 For the longest time, I've been wanting to update my own site. I work on so many things but my own site is not one of them. I keep promising to do something and get pulled into working on some project or my young children need something (every few minutes!). Recently, my friend Brian pointed me to something that removes any sort of reason for wanting to procrastinate: [Jekyll][jekyll] and [Github Pages][gh-pages]. 
 
 Jekyll makes it much easier to update the site-- using my favorite editor vim. Yes, I have to do a few ruby-ish things, but that's OK, despite being a Perl (and now Python) guy. You get to my age and realize they are all essentially similar tools trying to solve variants of the same problem. It's all just bits, right?
