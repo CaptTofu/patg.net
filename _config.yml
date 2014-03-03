@@ -2,3 +2,4 @@ name: patg.net
 markdown: redcarpet
 pygments: true
 #baseurl: /
+url: http://patg.net
