@@ -146,7 +146,7 @@ This cluster setup is an example of the great things you can do with [Ansible][A
 - Even better algorithm with boostrapping
 - Find ansible and docker gurus to help give me critiques to the work 
 
-The one thing I took away from building this was how much faster it is to deploy containers than virtual machine instances. This has profound implication for software packaging and testing.
+The one thing I took away from building this was how much faster it is to deploy containers than virtual machine instances. This has profound implications for software packaging and testing.
 
 [Docker]: http://docker.io
 [Ansible]: http://www.ansible.com/home
