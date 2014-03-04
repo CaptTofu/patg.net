@@ -1,0 +1,165 @@
+---
+layout: post
+title: "Ansible provisioning of a Galera Cluster (Percona XtraDB Cluster)"
+date: 2014-03-03 21:21:00
+categories: docker
+---
+
+# Building a MySQL [Galera][Galera] cluster with [Docker][Docker] and [Ansible][Ansible]
+
+[Galera][Galera] replication has been very useful for having a relatively simple to set up and manage a MySQL HA database backend for various platform services at HP. Asynchronous replication is fine, it's just that for complex cloud systems, a simple solution is desired for replication and asynchornous replication would require [PRM][prm] (corosync/pacemaker). Over the past two years, I've worked with both [SaltStack][saltstack] and Chef for provisioning galera clusters. Each had its challenge but they both had some things in common, particularly the issue having to do with bootstrapping the first node and subsequently bring up the other nodes, each with a successively augmented list of member nodes (other than ones self) for wsrep_cluster_address, and then finally updating the first bootstrap node to have a properl list versus "gcomm://".
+
+There have been a few projects I've been analyzing since working for HP ATG (Advanced Technology Group). Two of those have been [Docker][Docker] and the other [Ansible][Ansible]. I did some automation work with each when I first looked into both of them and have been meaning to go back and clean up that work and make it something more modular and easier to share with those in the community who need to be able to use both for a number of things. What I had basically was a [Ansible][Ansible] [playbook][ansible-playbook] that built a [Percona XtraDB Cluster][xtradb-cluster] ([Galera][Galera]) Node [Docker][Docker] Image. I realized it was novel, but for better re-usability, I decided to make it possible for the [playbook][ansible-playbook] to be used in any setup, not just [Docker][Docker].
+
+Initially, I thought this task would be simple. But one should always know when you are dealing with provisioning tools and setup, that there will be continual problems to solve. I liken waiting for a provisioning run to complete worse than watching drying paint because at least with paintin, you paint and it dries. With provisioning, you have to wait for it to fail. It would be like watching paint dry and having to paint it all over again because it was the wrong color. 
+
+The [Ansible][Ansible] learning-curve wasn't too difficult since like [SaltStack][salt], it uses YAML for its "[playbooks][ansible-playbook]" ([Salt][saltstack] "[states][saltstates]") and jinja for its templates. [Ansible][Ansible] is different from [Salt][saltstack] in that you run a [playbook][ansible-playbook] which when executed, uses SSH to connect to the node and execute it is managing whereas Salt uses a master-minion setup. 
+
+Additionally, I have been familiarizing myself with [Docker][Docker]. What is [Docker][Docker]? It's a way to create lightweight, portable, self-sufficient containers from any application. Or as in the words of one of their developers "awsome-sauce on top of [lxc][lxc]". More or less, it's great functionality built on top of [lxc][lxc]. 
+
+Note: I will cover [Docker][Docker] specifically, and in more detail, in a later post.
+
+The container I use for this post is mostly bare-bones though with ssh installed and set up so that when you launch the container, you can ssh into it and run ansible against it. 
+
+## How it works
+
+The setup is relativly straightforward. I have on repo that I use to launch the containers and build a hosts inventory file for [Ansible][Ansible]. The [playbooks][ansible-playbook] are both a cluster [playbook][ansible-playbook] as well as a [haproxy][haproxy] [playbook][ansible-playbook]. They in turn use the ansible-galera and ansible-galera-haproxy roles. 
+
+The real functionality is in the ansible-galera role. This took a bit of work to get right. First off, you have to make sure to get the order correct when launching the three containers and having the first one bootstrap correctly. Also, upstart doesn't work correctly with [Docker][Docker], so I ended up using the init script /etc/init.d/mysql. A docker container needs an entrypoint. An entrypoint is what the container executes upon launching. For that, I created a script that launches:
+
+- mysql
+- pyclustercheck
+- sshd
+
+The reason I use pyclustercheck is because xinetd doesn't work correctly on the [Docker][Docker] container. It runs, and the mysqlchk executes but there is nothing returned when you telnet port 9200. Pyclustercheck essentially replaces the command line script used by xinetd, clustercheck and has a webserver implemented so that there is neither a need for clustercheck nor xinetd.
+
+## How it works
+
+The core functionality for this [playbook][ansible-playbook] is how it determines if a node is the first node and if it should be set to bootstrap (`wsrep_cluster_address=gcomm://`). Much of the functionality, I simply modified the work I had done in a Salt state for [Galera][Galera]. 
+
+The first thing to look at, and this is crucial, is [tasks/install_galera.yml][install-galera-yml] in the [ansible-galera][ansible-galera] repo. Lines 14-16 set a variable bootstrap_check to "bootstrap" if mysql has not been installed and "installed" if it has. This needs to be known in order to know if mysql ([PXC][xtradb-cluster]) is being installed for the first time and that bootstrapping the node would be the correct thing to do. 
+
+Next, observe the template in the [ansible-galera][ansible-galera] repo. and [templates/etc/mysql/my.cnf.j2][my-cnf-j2], lines 54-73. 
+
+On line 55, an list is defined for containing members of the cluster. Line 58 a simple boolean for to be used to determine if the cluster node is being bootstrapped. On lines 61 through 63, bootstrap_cluster is set to 1 if the node being provisioned is the first in the list and bootstrap_check is set to "bootstrap", then that means the node being provisioned needs to be the bootstrap node.
+
+Lines 65 through 71 add the IP address of a node from the hosts defined in the ansible hosts inventory file under `[galera_cluster]` if the IP address is not the IP address of the node being provisioned (bug in Ubuntu). 
+
+Line 72 joins the hosts together so that there is a line such as `wsrep_cluster_address=gcomm://172.0.17.1,172.0.17.2...`. 
+
+Finally, in [tasks/configure_galera.yml][configure-galera-yml], where the my.cnf is written out with the correct cluster address that the [playbook][ansible-playbook] worked so hard at creating is interpolated and the mysql is restarted. 
+
+There are other functionalities in the code that I won't go into detail about can be purused in the [ansible-galera][ansible-galera] repo that are straighforward.
+
+
+## Steps to create a cluster 
+
+
+### Requirements:
+
+- [Docker][Docker]
+- [Ansible][Ansible]
+- [Ansible Galaxy][AnsibleGalaxy]
+
+
+### There are 4 repositories in question:
+
+- http://github.com/CaptTofu/docker-galera.git - scripts for building the hosts file and launching/deleting containers used in testing this
+- http://github.com/CaptTofu/cluster-install.git - the top-level playbook that uses both the ansible-galera and ansible-galera-haproxy roles refered to here
+- http://github.com/CaptTofu/ansible-galera.git - the role for setting up the [Galera][Galera] cluster using [PXC][xtradb-cluster]. Installed via [ansible-galaxy][AnsibleGalaxy]
+- http://github.com/CaptTofu/ansible-galera-haproxy.git - the role for setting up the [haproxy][haproxy] setup that would utilize this cluster, installed by [ansible-galaxy][AnsibleGalaxy]
+
+
+### Check out the docker-galera and cluster-install repositories
+
+Check out the docker-galera and cluster-install repositories (the first two listed above). I usually pick a place such as ~/code, but wherever you like to do your work. 
+
+
+### Install the ansible-galera and ansible-galera-haproxy roles
+
+Using [ansible-galaxy][AnsibleGalaxy], install both the ansible-galera and ansible-galera-haproxy roles
+
+    $ ansible-galaxy install --force --roles-path=/where/ever/you/want/your/roles CaptTofu.ansible-galera
+    $ ansible-galaxy-haproxy install --force --roles-path=/where/ever/you/want/your/roles CaptTofu.ansible-galera
+
+
+### Launch the docker containers
+
+Enter the directory containing the cluster-install repository and run the following:
+
+    ~/code/cluster-install$ ../docker-galera/docker-launch-nodes.sh
+
+At this point, you have 4 running containers -- 3 for [PXC][xtradb-cluster] (your [Galera][Galera] cluster) and 1 for [haproxy][haproxy] (this would be essentially any application that needs to connect to the cluster) and for this exercise, a hosts file that ansible will use.
+
+
+### Run the cluster playbook
+
+Now you can run the playbook (still from within the cluster-install repo directory):
+
+    ~/code/cluster-install$ ansible-playbook -i hosts -u root cluster.yml
+
+At this point, you will have a running cluster
+
+
+### Run the [haproxy][haproxy] playbook
+
+    ~/code/cluster-install$ ansible-playbook -i hosts -u root haproxy.yml
+
+At this point, you will have a proxy node that can connect to the cluster!
+
+
+### Use the cluster
+
+You will need to find out the IP address of your [HAProxy][haproxy] container:
+
+    ~/code/cluster-install$ docker inspect haproxy|grep -i ipadd
+        "IPAddress": "172.17.0.125"
+
+SSH into the [HAProxy][haproxy] container:
+
+    # mysql -u docker -pdocker -h 127.0.0.1
+
+    root@35a653c02872:/var/log# mysql -u docker -pdocker -h 127.0.0.1
+    Welcome to the MySQL monitor.  Commands end with ; or \g.
+    Your MySQL connection id is 11
+    Server version: 5.6.15-63.0-log Percona XtraDB Cluster (GPL), Release 25.4, wsrep_25.4.r4043
+    
+    Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
+    
+    Oracle is a registered trademark of Oracle Corporation and/or its
+    affiliates. Other names may be trademarks of their respective
+    owners.
+    
+    Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+    
+    mysql>
+
+And now, you are in business!
+
+
+## Conclusion
+
+This cluster setup is an example of the great things you can do with [Ansible][Ansible] and [Docker][Docker] and I intend on improving the playbook and setup. Some of which include:
+
+- Cleanup!
+- Better setup with how to have an SSH key that can be used in the repo
+- Even better algorithm with boostrapping
+- Find ansible and docker gurus to help give me critiques to the work 
+
+The one thing I took away from building this was how much faster it is to deploy containers than virtual machine instances. This has profound implication for software packaging and testing.
+
+[Docker]: http://docker.io
+[Ansible]: http://www.ansible.com/home
+[Galera]: http://codership.com/content/using-galera-cluster 
+[xtradb-cluster]: http://www.percona.com/software/percona-xtradb-cluster
+[prm]: http://www.mysqlperformanceblog.com/2011/11/29/percona-replication-manager-a-solution-for-mysql-high-availability-with-replication-using-pacemaker/
+[AnsibleGalaxy]: https://galaxy.ansible.com/
+[ansible-galera]: https://github.com/CaptTofu/ansible-galera
+[ansible-playbook]: http://docs.ansible.com/playbooks.html
+[my-cnf-j2]: https://github.com/CaptTofu/ansible-galera/blob/master/templates/etc/mysql/my.cnf.j2
+[install-galera-yml]: https://github.com/CaptTofu/ansible-galera/blob/master/tasks/install_galera.yml
+[configure-galera-yml]: https://github.com/CaptTofu/ansible-galera/blob/master/tasks/configure_galera.yml
+[saltstack]: http://www.saltstack.com 
+[saltstates]: http://docs.saltstack.com/topics/tutorials/starting_states.html
+[haproxy]: http://haproxy.1wt.eu/
+[lxc]: https://linuxcontainers.org/
