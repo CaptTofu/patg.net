@@ -102,7 +102,7 @@ Make a note of the image ID. In this example, it would be `5d9fadfacecf`
 Using [ansible-galaxy][AnsibleGalaxy], install both the ansible-galera and ansible-galera-haproxy roles
 
     $ ansible-galaxy install --force --roles-path=/where/ever/you/want/your/roles CaptTofu.ansible-galera
-    $ ansible-galaxy-haproxy install --force --roles-path=/where/ever/you/want/your/roles CaptTofu.ansible-galera
+    $ ansible-galaxy install --force --roles-path=/where/ever/you/want/your/roles CaptTofu.ansible-galera
 
 
 ### Launch the docker containers
