@@ -41,7 +41,7 @@ The first thing to look at, and this is crucial, is [tasks/install_galera.yml][i
 
 Next, observe the template in the [ansible-galera][ansible-galera] repo. and [templates/etc/mysql/my.cnf.j2][my-cnf-j2], lines 54-73. 
 
-On line 55, an list is defined for containing members of the cluster. Line 58 a simple boolean for to be used to determine if the cluster node is being bootstrapped. On lines 61 through 63, bootstrap_cluster is set to 1 if the node being provisioned is the first in the list and bootstrap_check is set to "bootstrap", then that means the node being provisioned needs to be the bootstrap node.
+On line 55, an list is defined for containing members of the cluster. Line 58 a simple boolean for to be used to determine if the cluster node is being bootstrapped. On lines 61 through 63, bootstrap_cluster is set to 1 if the node being provisioned is the first in the list and bootstrap_check.stdout subscript 0 is set to "bootstrap", then that means the node being provisioned needs to be the bootstrap node.
 
 Lines 65 through 71 add the IP address of a node from the hosts defined in the ansible hosts inventory file under `[galera_cluster]` if the IP address is not the IP address of the node being provisioned (bug in Ubuntu). 
 
@@ -72,8 +72,30 @@ There are other functionalities in the code that I won't go into detail about ca
 
 ### Check out the docker-galera and cluster-install repositories
 
-Check out the docker-galera and cluster-install repositories (the first two listed above). I usually pick a place such as ~/code, but wherever you like to do your work. 
+Check out the docker-galera and cluster-install repositories (the first two listed above). The poster of this blog uses ~/code, however, wherever the preference of where work is done
 
+### Build the docker image for the Galera cluster
+
+Enter the directory for docker-galera repo and build the image:
+
+    host:~/code/docker-galera$ docker build .
+    Uploading context 174.1 kB
+    Uploading context
+    Step 1 : FROM ubuntu:13.04
+     ---> eb601b8965b8
+    Step 2 : MAINTAINER Patrick aka CaptTofu Galbraith , patg@patg.net
+     ---> Using cache
+     ---> 6cc8cbe1a0db
+    Step 3 : RUN apt-get update      && apt-get upgrade -y      && apt-get clean
+     ---> Using cache
+     ---> f74e32f52dee
+    <snip>
+    Step 16 : ENTRYPOINT ["/usr/local/sbin/start_services.sh"]
+     ---> Running in a1fbf763c77f
+     ---> 5d9fadfacecf
+     Successfully built 5d9fadfacecf
+
+Make a note of the image ID. In this example, it would be `5d9fadfacecf`
 
 ### Install the ansible-galera and ansible-galera-haproxy roles
 
@@ -85,12 +107,20 @@ Using [ansible-galaxy][AnsibleGalaxy], install both the ansible-galera and ansib
 
 ### Launch the docker containers
 
-Enter the directory containing the cluster-install repository and run the following:
+Enter the directory containing the cluster-install repository and run `docker-launch-nodes.sh` and using the sole argument the image ID recorded above when the image was built:
 
-    ~/code/cluster-install$ ../docker-galera/docker-launch-nodes.sh
+    ~/code/cluster-install$ ../docker-galera/docker-launch-nodes.sh 5d9fadfacecf
 
-At this point, you have 4 running containers -- 3 for [PXC][xtradb-cluster] (your [Galera][Galera] cluster) and 1 for [haproxy][haproxy] (this would be essentially any application that needs to connect to the cluster) and for this exercise, a hosts file that ansible will use.
+At this point, there should be 4 running containers -- 3 for [PXC][xtradb-cluster] (your [Galera][Galera] cluster) and 1 for [haproxy][haproxy] (this would be essentially any application that needs to connect to the cluster) and for this exercise, a hosts file that ansible will use.
 
+Verify that these containers are indeed running. An example:
+
+    host:~/code/docker-galera$ docker ps
+    CONTAINER ID        IMAGE                        COMMAND                CREATED             STATUS              PORTS                                                      NAMES
+    0636ea03d91e        a1fbf763c77f                 /usr/local/sbin/star   3 hours ago         Up 3 hours          22/tcp, 3306/tcp, 4444/tcp, 4567/tcp, 4568/tcp, 9200/tcp   galera_node3
+    46c4b4a2c8a8        a1fbf763c77f                 /usr/local/sbin/star   3 hours ago         Up 3 hours          22/tcp, 3306/tcp, 4444/tcp, 4567/tcp, 4568/tcp, 9200/tcp   galera_node2
+    4b5fac0b202a        a1fbf763c77f                 /usr/local/sbin/star   3 hours ago         Up 3 hours          22/tcp, 3306/tcp, 4444/tcp, 4567/tcp, 4568/tcp, 9200/tcp   galera_node1
+    35a653c02872        a1fbf763c77f /usr/local/sbin/sshd   2 days ago          Up 2 days           22/tcp                                                     haproxy
 
 ### Run the cluster playbook
 
@@ -105,12 +135,12 @@ At this point, you will have a running cluster
 
     ~/code/cluster-install$ ansible-playbook -i hosts -u root haproxy.yml
 
-At this point, you will have a proxy node that can connect to the cluster!
+At this point, there will be a proxy node that is connected to the cluster!
 
 
 ### Use the cluster
 
-You will need to find out the IP address of your [HAProxy][haproxy] container:
+Determine the IP address of the [HAProxy][haproxy] container:
 
     ~/code/cluster-install$ docker inspect haproxy|grep -i ipadd
         "IPAddress": "172.17.0.125"
@@ -139,7 +169,7 @@ And now, you are in business!
 
 ## Conclusion
 
-This cluster setup is an example of the great things you can do with [Ansible][Ansible] and [Docker][Docker] and I intend on improving the playbook and setup. Some of which include:
+This cluster setup is an example of the great things one can do with [Ansible][Ansible] and [Docker][Docker] and I intend on improving the playbook and setup. Some of which include:
 
 - Cleanup!
 - Better setup with how to have an SSH key that can be used in the repo
@@ -147,6 +177,13 @@ This cluster setup is an example of the great things you can do with [Ansible][A
 - Find ansible and docker gurus to help give me critiques to the work 
 
 The one thing I took away from building this was how much faster it is to deploy containers than virtual machine instances. This has profound implications for software packaging and testing.
+
+
+## Credits
+
+- Patrick Galbraith aka "CaptTofu" (HP ATG)
+- David Busby (Percona)
+
 
 [Docker]: http://docker.io
 [Ansible]: http://www.ansible.com/home
