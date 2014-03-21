@@ -2,28 +2,23 @@
 layout: post
 title: "Building a blog with Jekyll and Github Pages"
 date: 2014-03-20 22:00:00
-categories: docker
+categories: blogging 
 ---
-
-# Building a Blog Site using [Jekyll][jekyll] and [Github Pages][github-pages]
 
 For the longest time, I've used [Livejournal][livejournal] for my blog but recently thought it might be good to do something different with my blog as I felt mine was looking a bit dated. There are currently a number of different options for those who want to blog their thoughts and ideas to the world such as [Blogger][blogger], [Type Pad][typepad], and [Word Press][wordpress]. Those are all good options with various features depending on what one is looking for and technical level. For me, I wanted something that allowed me to build my site, to as much a degree as possible, tools that I use for my daily job. One of my favorite tools and the tool I use more than anything is the [Vim][vim] editor. Secondly, I use [Git][git] and specifically for publishing [git][git]-managed projects, [Github][github]. 
 
 You see, I don't really like most Graphical UIs. I find them cumbersome and that they often just get in the way of wanting to do simple things. Also, since I work so much on automating so many different things, I'm just innately predisposed to doing work on the command line. Hence, I gravitate to tools that suit my modus operandi.
 
 After speaking with my friend Brian Aker, he mentioned to me this project called [Jekyll][jekyll]. When he told me I could simply use [Git][git] and [Vim][vim] to edit and manage it, that was all I needed to hear.
-
-
+<br />
 ## How to build your site with Jekyll
 
-I assumed I wouldn't even try to migrate my old blog to the new site, which is sufficient for me in that I can simply refer people to [Livejournal][livejournal] to see old posts, however [Jekyll][jekyll] offers [jekyl-import][jekyll-import] as a means to import pages from [Drupal][drupal], [Wordpress][wordpress], Google Reader, [Joomla][joomla], etc. (though not [Livejournal][livejournal]... yet).
-
-
+I assumed I wouldn't even try to migrate my old blog to the new site, which is sufficient for me in that I can simply refer people to [Livejournal][livejournal] to see old posts, however [Jekyll][jekyll] offers [jekyll-import][jekyll-import] as a means to import pages from [Drupal][drupal], [Wordpress][wordpress], Google Reader, [Joomla][joomla], etc. (though not [Livejournal][livejournal]... yet).
+<br />
 ## First steps
 
 This post is intended to keep it very simple but get you up and running. You are welcome to review the more detailed features of [Jekyll][jekyll] on their [site][jekyll].
-
-
+<br />
 ### Prerequisites
 
 - Ruby
@@ -31,25 +26,21 @@ This post is intended to keep it very simple but get you up and running. You are
 - editor of your choice
 - [Github][github] account
 - Knowledge of [Markdown][markdown]
-
+<br />
+<br />
 
 ### Install Jekyll
 
 First, you obviously have to install [Jekyll][jekyll]. You will want in advance to make sure to set up [RVM][rvm]. Install the gem:
 
     gem install jekyll
-
-
-
-
+<br />
 ### Create a post
 
-Create a [markdown][markdown] page with the contents you want. You must create a page named with a timestamp YYY-MM-DD-my-post.markdown. Example:
+Create a [markdown][markdown] page with the contents you want. You must create a page named with a timestamp YYYY-MM-DD-my-post.markdown. Example:
 
     vi _posts/2014-03-21-my-post.markdown
-
-
-
+<br />
 ### Serve up the page locally
 
 Jekyll comes with the ability to serve up the page locally with a lightweight development web-server to view your changes. 
@@ -63,14 +54,11 @@ And then access the page
 I run everything in a vmware instance, so of course the ``host`` value is the IP address of my virtual machine.
 
 At this point, it would be necessary to have the generated site be publicly available. [Jekyll][jekyll] powers [Github Pages][github-pages], so the next steps pertain how to set up both [Github Pages][github-pages] and DNS.
-
-
-
+<br />
 ## Setting up [Github Pages][github-pages]
 
 This section will describe the process for setting up [Github Pages][github-pages]
-
-
+<br />
 ### Create a [Github Pages][github-pages] repository
 
 You will need to create a [Github Pages][github-pages] repository. The instructions on how to do this are very simple per the [documentation][github-pages]. 
@@ -79,17 +67,13 @@ You will need to create a [Github Pages][github-pages] repository. The instructi
 - I selects ``Start from scratch``
 
 I created a repository called ``patg.net``.
-
-
-
+<br />
 ### Set the default branch in the repository to ``gh-pages``
 
 As the header suggests, you will want to set the default branch in your repository (using regular [Github][github])
 
 ![default branch gh-pages](/assets/gh-pages.png "gh-pages")
-
-
-
+<br />
 ### Set up your repository
 
 Inside of your site's directory, git initialize it
@@ -100,28 +84,19 @@ Inside of your site's directory, git initialize it
 Then add the remote to the [Github Pages][github-pages] repository. In my case, I ran the following:
     
     git remote add origin https://github.com/CaptTofu/patg.net.git
-
-
-
-
+<br />
 ### Commit the changes
 
 Add the post and commit (if you are adding a new post, not needed due to previous step)
 
     $ git add _posts/2013-03-21-new-post.markdown
-
-
-
-
+<br />
 ### Push the changes
 
 Push to the repository, once you are certain that's what you wish to publish after viewing locally with the development web-server. Push to the gh-pages branch:
 
-    $ git push origin gh-pages 
-
-
-
-
+    $ git push origin gh-pages
+<br />
 ### View your changes on your site!
 
 Initially, if you don't have DNS set up, you will view your site on [Github Pages][github-pages] as something like:
@@ -133,19 +108,14 @@ If you are going to keep it this way, you will need to set ``_config.yml`` to ha
     baseurl: /
 
 If you switch DNS to this being a primary, non-sub-domain site, this line can be removed.
-
-
-
+<br />
 ## Setting up DNS
 
 Depending on your provider, you will need to set up DNS to either use a CNAME to point to the new blog, or as in my case, I wanted this to be ``http://patg.net`` and not a subdomain site, so I had to create two A-records to:
 
 - 192.30.252.153
 - 192.30.252.154 
-
-
-
-
+<br />
 ## Add a CNAME file
 
 The directions state you will need a file called ``CNAME``, which simply contains:
@@ -153,16 +123,14 @@ The directions state you will need a file called ``CNAME``, which simply contain
     patg.net
 
 At this point your site would be fully functioning!
-
-
+<br />
 ## Other features and enhancements
 
 There are a number of other things to add to a [Jekyll][jekyll] site. This section covers those which my site needed.
-
-
+<br />
 ### Comments
 
-What about comments? Well, for me, I decided to use [Discus][discuss]. All I had to simply do was to add the div tag that [Discus][discus] provides you from their site to the file ``_layouts/post.html``:
+What about comments? Well, for me, I decided to use [Discus][discus]. All I had to simply do was to add the div tag that [Discus][discus] provides you from their site to the file ``_layouts/post.html``:
 
     <div class="post">
     {{ content }}
@@ -172,8 +140,7 @@ What about comments? Well, for me, I decided to use [Discus][discuss]. All I had
             /* * * CONFIGURATION VARIABLES: EDIT BEFORE PASTING INTO YOUR WEBPAGE * * */
             var disqus_shortname = 'patgnet'; 
      ... SNIP ...
-
-
+<br />
 ### RSS Feeds
 
 I wanted my site to be able to be picked up by a number of "Planet" sites. For this, I needed RSS. This is very easy to add. Simply run the following in the directory containg your site repository:
@@ -185,8 +152,7 @@ I wanted my site to be able to be picked up by a number of "Planet" sites. For t
     $ git push origin gh-pages
 
 That's all!
-
-
+<br />
 # RedCarpet
 
 In order to have [Redcarpet][redcarpet], the [markdown][markdown] library that [Github Pages][github-pages] uses which offers features stock [markdown][markdown] doesn't, you can install this module into the ``_plugins`` directory simply by doing the following:
@@ -204,16 +170,13 @@ Add it to ``_config.yml``:
 You will also need to install the gem ``albino`` for it to work:
 
     gem install albino
-
-
+<br />
 ## Summary 
 
 With this post, you should have my example of how I set up my site as a good start for yourself. Mileage may vary, but I do think this should help, along with the various documentation on both [Jekyll][jekyll]'s and [Github Pages][github-pages]` websites to get your own site set up.
 
 As I mentioned before, there are far many more options and useful bits of information I could have delved into that even I haven't fully utilized and if I feel inspired upon learning more, you can be certain to look here on my site about those realizations!
  
-
-
 
 
 [disqus]: http://disqus.com/
