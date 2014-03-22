@@ -57,14 +57,14 @@ At this point, it would be necessary to have the generated site be publicly avai
 <br />
 ## Setting up [Github Pages][github-pages]
 
-This section will describe the process for setting up [Github Pages][github-pages]
+The following section I wanted to describe the process for setting up [Github Pages][github-pages]. The documentation on the site is excellent, but there are some things that I thought describing would help.
 <br />
 ### Create a [Github Pages][github-pages] repository
 
 You will need to create a [Github Pages][github-pages] repository. The instructions on how to do this are very simple per the [documentation][github-pages]. 
 
 - I followed the directions for ``Project site`` on the site though you may need an organizational site.
-- I selects ``Start from scratch``
+- I selected ``Start from scratch``
 
 I created a repository called ``patg.net``.
 <br />
@@ -116,13 +116,14 @@ Depending on your provider, you will need to set up DNS to either use a CNAME to
 - 192.30.252.153
 - 192.30.252.154 
 <br />
+
 ## Add a CNAME file
 
 The directions state you will need a file called ``CNAME``, which simply contains:
 
     patg.net
 
-At this point your site would be fully functioning!
+At this point your site should be fully functioning!
 <br />
 ## Other features and enhancements
 
