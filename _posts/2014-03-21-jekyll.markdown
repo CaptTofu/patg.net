@@ -116,7 +116,7 @@ Depending on your provider, you will need to set up DNS to either use a CNAME to
 - 192.30.252.153
 - 192.30.252.154 
 <br />
-
+<br />
 ## Add a CNAME file
 
 The directions state you will need a file called ``CNAME``, which simply contains:
