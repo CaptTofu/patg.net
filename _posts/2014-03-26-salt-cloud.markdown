@@ -5,166 +5,127 @@ date: 2014-03-23 09:00:00
 categories: provisioning 
 ---
 
-# Building a MySQL [Galera][Galera] cluster with [Docker][Docker] and [Ansible][Ansible]
+# Using Salt Cloud
 
-[Galera][Galera] replication has been very useful for having a relatively simple to set up and manage a MySQL HA database backend for various platform services at HP. Asynchronous replication is fine, it's just that for complex cloud systems, a simple solution is desired for replication and asynchornous replication would require [PRM][prm] (corosync/pacemaker). Over the past two years, I've worked with both [SaltStack][saltstack] and Chef for provisioning galera clusters. Each had its challenge but they both had some things in common, particularly the issue having to do with bootstrapping the first node and subsequently bring up the other nodes, each with a successively augmented list of member nodes (other than ones self) for wsrep_cluster_address, and then finally updating the first bootstrap node to have a properl list versus `gcomm://`.
+Recently, I took an interest in trying out Salt Cloud, the provisioning tool component of SaltStack, the provisioning to that offers "fast, scalable and flexible software for data center automation, from infrastructure and any cloud, to the entire application stack". 
 
-There have been a few projects I've been analyzing since working for HP ATG (Advanced Technology Group). Two of those have been [Docker][Docker] and the other [Ansible][Ansible]. I did some automation work with each when I first looked into both of them and have been meaning to go back and clean up that work and make it something more modular and easier to share with those in the community who need to be able to use both for a number of things. What I had basically was a [Ansible][Ansible] [playbook][ansible-playbook] that built a [Percona XtraDB Cluster][xtradb-cluster] ([Galera][Galera]) Node [Docker][Docker] Image. I realized it was novel, but for better re-usability, I decided to make it possible for the [playbook][ansible-playbook] to be used in any setup, not just [Docker][Docker].
+I was attempting at first to get it to run with HP Cloud as well as a simple cloud setup with Devstack and found that I had to actually read the source code to really know how to get it to work. That was when I decided to contribute to the project both with documentation and a small fix to the OpenStack driver, pep8/pyflakes cleanups and documentation.
 
-Initially, I thought this task would be simple. But one should always know when you are dealing with provisioning tools and setup, that there will be continual problems to solve. I liken waiting for a provisioning run to complete being worse than watching paint dry: because at least with painting, you paint the surface and it simply dries (unless you are in Singapore on a humid day!). With provisioning, you often have to wait for it to fail. It would be like watching paint dry and having to paint it all over again because it was the wrong color once dried. 
+## Salt and Salt-cloud 
 
-The [Ansible][Ansible] learning-curve wasn't too difficult since like [SaltStack][salt], it uses YAML for its "[playbooks][ansible-playbook]" ([Salt][saltstack] "[states][saltstates]") and jinja for its templates. [Ansible][Ansible] is different from [Salt][saltstack] in that you run a [playbook][ansible-playbook] which when executed, uses SSH to connect to the node and execute it is managing whereas Salt uses a master-minion setup. 
+There is a lot of information about Salt itself, but this post is focused on Salt Cloud.
 
-Additionally, I have been familiarizing myself with [Docker][Docker]. What is [Docker][Docker]? It's a way to create lightweight, portable, self-sufficient containers from any application. Or as in the words of one of their developers "awsome-sauce on top of [lxc][lxc]". More or less, it's great functionality built on top of [lxc][lxc]. 
+As just mentioned, Salt is provisioning software, just as Chef, Puppet and Ansible are. Salt works with a Salt master which then runs states on minions (clients). These minions run the commands that the state, when run, results in the system being as expected according to the state. The master is cognizant of its minions and stores data used in the provisioning process. 
 
-Note: I will cover [Docker][Docker] specifically, and in more detail, in a later post.
+Salt is written in Python and uses YAML templates for both its "states" as well as its "pillars". States are YAML files that are a representation of a state in which a system should be in. Pillars are tree-like structures defined on the Salt master and passed to the minions. Pillar data is represented in YAML files as well. 
 
-The container I use for this post is mostly bare-bones though with ssh installed and set up so that when you launch the container, you can ssh into it and run ansible against it. 
+In addition to states, it's possible to run single commands using Salt by way of the Salt master and on all or specific minions.
 
-## How it works
+Salt Cloud, as already mentioned, is the provisioning tool component of Salt. Often, you will see in cloud-based organizations that different teams might use a tool such as Chef or Salt, though they will often script the functionality that orachestrates the launching and/or deletion of instances. For instance, I worked on one team that used Chef and we had a very nice tool written in Ruby that would launch instances that would load cookbooks for and Chef would then provision. This approach can give one a lot of control but also be hard to maintain as well as being very application or cloud-specific. 
 
-The setup is relativly straightforward. I have on repo that I use to launch the containers and build a hosts inventory file for [Ansible][Ansible]. The [playbooks][ansible-playbook] are both a cluster [playbook][ansible-playbook] as well as a [haproxy][haproxy] [playbook][ansible-playbook]. They in turn use the ansible-galera and ansible-galera-haproxy roles. 
+Salt-cloud has the approach of keeping the provisioning, instance creation and deletion aspect of salt under the same system and by doing so, the same concepts that Salt uses, namely YAML being the means to express states and pillars naturally is also used for Salt Cloud.
 
-The real functionality is in the ansible-galera role. This took a bit of work to get right. First off, you have to make sure to get the order correct when launching the three containers and having the first one bootstrap correctly. Also, upstart doesn't work correctly with [Docker][Docker], so I ended up using the init script /etc/init.d/mysql. A docker container needs an entrypoint. An entrypoint is what the container executes upon launching. For that, I created a script that launches:
+When Salt Cloud is used to launch an instance, that instance is not only brought up, but set up as a minion being managed by the master that launched it.
 
-- mysql
-- pyclustercheck
-- sshd
+The other good think about Salt Cloud is that it is built on top of Apache LibCloud which makes it possible to use Salt Cloud with any number of cloud providers such as EC2, Google Compute Engine, LXC, Linode, Azure and of course OpenStack providers such as HP Cloud and Rackspace.
 
-The reason I use pyclustercheck is because xinetd doesn't work correctly on the [Docker][Docker] container. It runs, and the mysqlchk executes but there is nothing returned when you telnet port 9200. Pyclustercheck essentially replaces the command line script used by xinetd, clustercheck and has a webserver implemented so that there is neither a need for clustercheck nor xinetd.
+## Salt Cloud concepts
 
-## How it works
+Salt Cloud uses the following concepts that I discovered upon using it:
 
-The core functionality for this [playbook][ansible-playbook] is how it determines if a node is the first node and if it should be set to bootstrap (`wsrep_cluster_address=gcomm://`). Much of the functionality, I simply lifted and modified from the work I had done in a Salt state for [Galera][Galera]. 
+- Cloud Provider: a particular cloud connection including the username, password, any sort of API key, region as well as authentication endpoints.
+- Cloud profile: a particular type of image to use when launching an instance or container. This being, the size/flavor, image ID and the cloud provider to use
 
-The first thing to look at, and this is crucial, is [tasks/install_galera.yml][install-galera-yml] in the [ansible-galera][ansible-galera] repo. Lines 14-16 set a variable bootstrap_check to "bootstrap" if mysql has not been installed and "installed" if it has. This needs to be known in order to know if mysql ([PXC][xtradb-cluster]) is being installed for the first time and that bootstrapping the node would be the correct thing to do. 
+## Salt Cloud with HP Cloud
 
-Next, observe the template in the [ansible-galera][ansible-galera] repo. and [templates/etc/mysql/my.cnf.j2][my-cnf-j2], lines 54-73. 
+One of the first things I wanted to try to get working properly was the ability to launch instances with HP Cloud. This proved difficult at first and the documentation was dated for the initial version of HP Cloud (1.0, based off of Essex and using Nova Networking) whereby when launching instances, external IP addresses were automatically assigned to an instance, whereas with the newer HP Cloud (1.1, based off of Havana and using Neutron), one has to first create a floating IP and then add it to a specific instance.
 
-On line 55, an list is defined for containing members of the cluster. Line 58 a simple boolean for to be used to determine if the cluster node is being bootstrapped. On lines 61 through 63, bootstrap_cluster is set to 1 if the node being provisioned is the first in the list and bootstrap_check.stdout subscript 0 is set to "bootstrap", then that means the node being provisioned needs to be the bootstrap node.
+Why is this a problem? Well, because when the command salt-cloud is run, it needs to not only be able to launch an instance but also connect to it through SSH and install the minion to be able to talk to the master. Without an IP to connect to, this won't happen, and the examples that were in the documentation did not work with HP Cloud 1.1. 
 
-Lines 65 through 71 add the IP address of a node from the hosts defined in the ansible hosts inventory file under `[galera_cluster]` if the IP address is not the IP address of the node being provisioned (bug in Ubuntu). 
+Also do note, this post is to introduce the reader to concepts. For more in-depth reading on the matter, it is strongly advised to review the [Salt Cloud docs][salt-cloud-docs], which the author recently contributed to for easier Salt Cloud usage with OpenStack and HP Cloud in particular!
 
-Line 72 joins the hosts together so that there is a line such as `wsrep_cluster_address=gcomm://172.0.17.1,172.0.17.2...`. 
+## Setting up a cloud provider
 
-Finally, in [tasks/configure_galera.yml][configure-galera-yml], where the my.cnf is written out with the correct cluster address that the [playbook][ansible-playbook] worked so hard at creating is interpolated and the mysql is restarted. 
+As previously stated, a cloud provider is exactly what the term means. One can have numerous cloud providers to chose from in any given setup, including different vendors that use different cloud technologies. These cloud providers have YAML-based configuration files typically located in ``/etc/salt/cloud.profiles.d``
 
-There are other functionalities in the code that I won't go into detail about can be purused in the [ansible-galera][ansible-galera] repo that are straighforward.
+Example:
 
+    $:/etc/salt/cloud.providers.d$ ls
+    hpcs_ae1.conf   openstack_grizzly.conf hpcs_aw2.conf
+    rackspace_dfw.conf rackspace_ord.conf
 
-## Steps to create a cluster 
+And example of one would be:
 
-
-### Requirements:
-
-- [Docker][Docker]
-- [Ansible][Ansible]
-- [Ansible Galaxy][AnsibleGalaxy]
-
-
-### There are 4 repositories in question:
-
-- http://github.com/CaptTofu/docker-galera.git - scripts for building the hosts file and launching/deleting containers used in testing this
-- http://github.com/CaptTofu/cluster-install.git - the top-level playbook that uses both the ansible-galera and ansible-galera-haproxy roles refered to here
-- http://github.com/CaptTofu/ansible-galera.git - the role for setting up the [Galera][Galera] cluster using [PXC][xtradb-cluster]. Installed via [ansible-galaxy][AnsibleGalaxy]
-- http://github.com/CaptTofu/ansible-galera-haproxy.git - the role for setting up the [haproxy][haproxy] setup that would utilize this cluster, installed by [ansible-galaxy][AnsibleGalaxy]
-
-
-### Check out the docker-galera and cluster-install repositories
-
-Check out the docker-galera and cluster-install repositories (the first two listed above). The poster of this blog uses ~/code, however, wherever the preference of where work is done
-
-### Build the docker image for the Galera cluster
-
-Enter the directory for docker-galera repo and build the image:
-
-    host:~/code/docker-galera$ docker build .
-    Uploading context 174.1 kB
-    Uploading context
-    Step 1 : FROM ubuntu:13.04
-     ---> eb601b8965b8
-    Step 2 : MAINTAINER Patrick aka CaptTofu Galbraith , patg@patg.net
-     ---> Using cache
-     ---> 6cc8cbe1a0db
-    Step 3 : RUN apt-get update      && apt-get upgrade -y      && apt-get clean
-     ---> Using cache
-     ---> f74e32f52dee
-    <snip>
-    Step 16 : ENTRYPOINT ["/usr/local/sbin/start_services.sh"]
-     ---> Running in a1fbf763c77f
-     ---> 5d9fadfacecf
-     Successfully built 5d9fadfacecf
-
-Make a note of the image ID. In this example, it would be `5d9fadfacecf`
-
-### Install the ansible-galera and ansible-galera-haproxy roles
-
-Using [ansible-galaxy][AnsibleGalaxy], install both the ansible-galera and ansible-galera-haproxy roles
-
-    $ ansible-galaxy install --force --roles-path=/where/ever/you/want/your/roles CaptTofu.ansible-galera
-    $ ansible-galaxy install --force --roles-path=/where/ever/you/want/your/roles CaptTofu.ansible-galera
-
-
-### Launch the docker containers
-
-Enter the directory containing the cluster-install repository and run `docker-launch-nodes.sh` and using the sole argument the image ID recorded above when the image was built:
-
-    ~/code/cluster-install$ ../docker-galera/docker-launch-nodes.sh 5d9fadfacecf
-
-At this point, there should be 4 running containers -- 3 for [PXC][xtradb-cluster] (your [Galera][Galera] cluster) and 1 for [haproxy][haproxy] (this would be essentially any application that needs to connect to the cluster) and for this exercise, a hosts file that ansible will use.
-
-Verify that these containers are indeed running. An example:
-
-    host:~/code/docker-galera$ docker ps
-    CONTAINER ID        IMAGE                        COMMAND                CREATED             STATUS              PORTS                                                      NAMES
-    0636ea03d91e        a1fbf763c77f                 /usr/local/sbin/star   3 hours ago         Up 3 hours          22/tcp, 3306/tcp, 4444/tcp, 4567/tcp, 4568/tcp, 9200/tcp   galera_node3
-    46c4b4a2c8a8        a1fbf763c77f                 /usr/local/sbin/star   3 hours ago         Up 3 hours          22/tcp, 3306/tcp, 4444/tcp, 4567/tcp, 4568/tcp, 9200/tcp   galera_node2
-    4b5fac0b202a        a1fbf763c77f                 /usr/local/sbin/star   3 hours ago         Up 3 hours          22/tcp, 3306/tcp, 4444/tcp, 4567/tcp, 4568/tcp, 9200/tcp   galera_node1
-    35a653c02872        a1fbf763c77f /usr/local/sbin/sshd   2 days ago          Up 2 days           22/tcp                                                     haproxy
-
-### Run the cluster playbook
-
-Now you can run the playbook (still from within the cluster-install repo directory):
-
-    ~/code/cluster-install$ ansible-playbook -i hosts -u root cluster.yml
-
-At this point, you will have a running cluster
-
-
-### Run the [haproxy][haproxy] playbook
-
-    ~/code/cluster-install$ ansible-playbook -i hosts -u root haproxy.yml
-
-At this point, there will be a proxy node that is connected to the cluster!
-
-
-### Use the cluster
-
-Determine the IP address of the [HAProxy][haproxy] container:
-
-    ~/code/cluster-install$ docker inspect haproxy|grep -i ipadd
-        "IPAddress": "172.17.0.125"
-
-SSH into the [HAProxy][haproxy] container:
-
-    # mysql -u docker -pdocker -h 127.0.0.1
-
-    root@35a653c02872:/var/log# mysql -u docker -pdocker -h 127.0.0.1
-    Welcome to the MySQL monitor.  Commands end with ; or \g.
-    Your MySQL connection id is 11
-    Server version: 5.6.15-63.0-log Percona XtraDB Cluster (GPL), Release 25.4, wsrep_25.4.r4043
+    hpcs_ae1:
+      minion:
+        master: mymaster.domain 
     
-    Copyright (c) 2000, 2013, Oracle and/or its affiliates. All rights reserved.
-    
-    Oracle is a registered trademark of Oracle Corporation and/or its
-    affiliates. Other names may be trademarks of their respective
-    owners.
-    
-    Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
-    
-    mysql>
+      identity_url: https://region-b.geo-1.identity.hpcloudsvc.com:35357/v2.0/tokens
+      compute_name: Compute
+      ignore_cidr: 10.0.0.1/24
+      networks:
+        - floating:
+          - Ext-Net
+        - fixed:
+          - my-network
+      protocol: ipv4
+      compute_region: region-b.geo-1
+      user: clouduser 
+      tenant:  clouduser-project1
+      password : xxxx 
+      ssh_key_name: test
+      ssh_key_file: /root/keys/test.key
+      provider: openstack
 
-And now, you are in business!
+In the above example, their are various connection metadata that is used to establish a connection to HP Cloud. This would be the same for any cloud provider and would vary according to the particular attributes of how one connects to a cloud. For instance, with Rackspace, one would also provide an ``apikey`` parameter. For ec2, ``provider`` would be ``ec2`` (obviously). 
+
+The ``networks`` setting provides one or more named networks that you provide. You will need to know these in advance if you intend to use them. In the example above, they are Ext-Net (default network with HP Cloud) and a network the user created ``my-network``. These are networks that the salt-cloud OpenStack driver uses to obtain a list of floating IP addresses, picking one to attach to the instance being provisioned in order to be able to set up the instance as a minion. 
+
+Interestingly, this is where I recently [modified][salt-openstack-contrib] the driver and contributed to salt-cloud code that would negate the need for specifying ``networks`` and instead simply obtain floating IPs if not specified regardless of network.  
+
+The ``ignore_cidr`` setting is for listing a range of IP addresses to not even bother using as an address to connect to for setting up the minion. In this case, even though salt-cloud will not attempt to use the private IP address for the instance, using ``ignore_cidr`` will making it so salt-cloud doesn't bother even identifying that the IP address is private.
+
+NOTE: If one wants to use the private IP address to connect to the instance-- for instance, if the master is in the same network in the cloud as the minions (actually commonplace) then one need only have the following in their cloud provider configuration file:
+
+    ssh_interface: private_ips
+
+This will result in salt-cloud using the private IP address when using SSH to connect to the instance during setup of the minion.
+
+So, it is clearly a simple setup and clean YAML representation per the philosophy of Salt.
+
+## Testing the cloud profile
+
+First of all, it is assumed that the reader of this post has already set up a python virtual environment. Other installation steps and issues include:
+
+- Installing Salt within the vurtual environment
+- One ought to set up the master (see [Salt Documentation][salt-docs]) 
+- You must run salt-cloud as root. This is a bit of a conundrum because the documentation clearly states that you ought to run a virtualenv setup for development yet you need to run it as root. I set up the virtualenv as suggested and ran as root and it works sufficiently.
+
+### Listing cloud providers
+
+
+## Setting up a cloud profile
+
+A cloud profile is yet another YAML file that represents how a particular instance is launched: what size/flavor it is, the cloud provider, image id, ssh key and name to use, etc. These files are typically located in ``/etc/salt/cloud.profiles.d``:
+
+    $:/etc/salt/cloud.profiles.d$ ls
+    hpcs.conf        devstack_cirros.conf  rackspace_quantal.conf devstack_ubuntu.conf
+    hpcs_raring.conf rackspace_raring.conf rackspace_precise.conf testwiki.conf
+
+And example of one of these files would be:
+
+    hpcs_raring:
+        provider: hpcs_ae1
+        image: 9302692b-b787-4b52-a3a6-daebb79cb498
+        ignore_cidr: 10.0.0.1/24
+        size: standard.small
+        ssh_key_file: /root/keys/test.key
+        ssh_key_name: test
+        ssh_username: ubuntu
+
+In this exemple, the provider used is for HP Cloud AE1 region, small flavor, Ubuntu raring image id, and for SSH a private key location is provided that will be used on the minion being set up. 
+
+After reading through the code, I did find 
 
 
 ## Conclusion
@@ -179,24 +140,8 @@ This cluster setup is an example of the great things one can do with [Ansible][A
 The one thing I took away from building this was how much faster it is to deploy containers than virtual machine instances. This has profound implications for software packaging and testing.
 
 
-## Credits
 
-- Patrick Galbraith aka "CaptTofu" (HP ATG)
-- David Busby (Percona)
-
-
-[Docker]: http://docker.io
-[Ansible]: http://www.ansible.com/home
-[Galera]: http://codership.com/content/using-galera-cluster 
-[xtradb-cluster]: http://www.percona.com/software/percona-xtradb-cluster
-[prm]: http://www.mysqlperformanceblog.com/2011/11/29/percona-replication-manager-a-solution-for-mysql-high-availability-with-replication-using-pacemaker/
-[AnsibleGalaxy]: https://galaxy.ansible.com/
-[ansible-galera]: https://github.com/CaptTofu/ansible-galera
-[ansible-playbook]: http://docs.ansible.com/playbooks.html
-[my-cnf-j2]: https://github.com/CaptTofu/ansible-galera/blob/master/templates/etc/mysql/my.cnf.j2
-[install-galera-yml]: https://github.com/CaptTofu/ansible-galera/blob/master/tasks/install_galera.yml
-[configure-galera-yml]: https://github.com/CaptTofu/ansible-galera/blob/master/tasks/configure_galera.yml
-[saltstack]: http://www.saltstack.com 
-[saltstates]: http://docs.saltstack.com/topics/tutorials/starting_states.html
-[haproxy]: http://haproxy.1wt.eu/
-[lxc]: https://linuxcontainers.org/
+[openstack]: http://openstack.org
+[salt-docs]: http://docs.saltstack.com/en/latest/contents.html
+[salt-cloud-docs]: http://docs.saltstack.com/en/latest/topics/cloud/index.html
+[salt-openstack-contrib]: https://github.com/saltstack/salt/blob/develop/salt/cloud/clouds/openstack.py#L462
