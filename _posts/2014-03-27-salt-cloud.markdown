@@ -335,7 +335,8 @@ At this point, you now have a newly launched minion and can start provisioning i
 If you wanted to delete the instance, you would simply run:
 
     # salt-cloud -d myinstance
-
+<br>
+<br>
 
 ## Conclusion
 
