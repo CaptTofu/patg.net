@@ -29,12 +29,14 @@ When [Salt Cloud][salt-cloud-docs] is used to launch an instance, that instance 
 
 The other good think about [Salt Cloud][salt-cloud-docs] is that it is built on top of Apache LibCloud which makes it possible to use [Salt Cloud][salt-cloud-docs] with any number of cloud providers such as EC2, Google Compute Engine, LXC, Linode, Azure and of course [OpenStack][openstack] providers such as [HP Cloud][hpcloud] and [Rackspace][rackspace].
 
+
 ## [Salt Cloud][salt-cloud-docs] concepts
 
 Salt Cloud uses the following concepts that I discovered upon using it:
 
 - Cloud Provider: a particular cloud connection including the username, password, any sort of API key, region as well as authentication endpoints.
 - Cloud profile: a particular type of image to use when launching an instance or container. This being, the size/flavor, image ID and the cloud provider to use
+
 
 ## [Salt Cloud][salt-cloud-docs] with [HP Cloud][hpcloud]
 
