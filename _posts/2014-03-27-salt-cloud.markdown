@@ -37,6 +37,7 @@ Salt Cloud uses the following concepts that I discovered upon using it:
 - Cloud Provider: a particular cloud connection including the username, password, any sort of API key, region as well as authentication endpoints.
 - Cloud profile: a particular type of image to use when launching an instance or container. This being, the size/flavor, image ID and the cloud provider to use
 <br>
+
 ## [Salt Cloud][salt-cloud-docs] with [HP Cloud][hpcloud]
 
 One of the first things I wanted to try to get working properly was the ability to launch instances with HP Cloud. This proved difficult at first and the documentation was dated for the initial version of [HP Cloud][hpcloud] (1.0, based off of Essex and using Nova Networking) whereby when launching instances, external IP addresses were automatically assigned to an instance, whereas with the newer [HP Cloud][hpcloud] (1.1, based off of Havana and using Neutron), one has to first create a floating IP and then add it to a specific instance.
