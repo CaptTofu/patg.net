@@ -101,7 +101,9 @@ First of all, it is assumed that the reader of this post has already set up a py
 - One ought to set up the master (see [Salt Documentation][salt-docs]) 
 - You must run salt-cloud as root. This is a bit of a conundrum because the documentation clearly states that you ought to run a virtualenv setup for development yet you need to run it as root. One way to do this is to set up the virtualenv as suggested as a regular user and run salt-cloud via sudo after activiting the virtual environment. The other way is to set up a virtualenv as root and install salt as: 
 
+
     pip install -e /home/regularuser/salt 
+
 
 ### Listing cloud providers
 
@@ -142,7 +144,7 @@ The next verification to be done would be to test one of the providers. A simple
 
 The command is run by specifying the cloud provider, in this case, ``hpcs_ae1``:
 
-    # salt-cloud --list-images hpcs_ae1 > list_images.txt
+    # salt-cloud --list-images hpcs_ae1
     [INFO    ] salt-cloud starting
     hpcs_ae1:
         ----------
