@@ -37,6 +37,7 @@ Salt Cloud uses the following concepts that I discovered upon using it:
 - Cloud Provider: a particular cloud connection including the username, password, any sort of API key, region as well as authentication endpoints.
 - Cloud profile: a particular type of image to use when launching an instance or container. This being, the size/flavor, image ID and the cloud provider to use
 <br>
+<br>
 
 ## [Salt Cloud][salt-cloud-docs] with [HP Cloud][hpcloud]
 
