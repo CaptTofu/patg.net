@@ -5,8 +5,6 @@ date: 2014-03-27 09:00:00
 categories: provisioning 
 ---
 
-# Using [Salt][saltstack] Cloud
-
 Recently, I took an interest in trying out [Salt Cloud][salt-cloud-docs], the provisioning tool component of [SaltStack][saltstack] or what will be refered to as "Salt" in this post, the provisioning to that offers "fast, scalable and flexible software for data center automation, from infrastructure and any cloud, to the entire application stack". 
 
 I was attempting at first to get it to run with [HP Cloud][hpcloud] as well as a simple cloud setup with Devstack and found that I had to actually read the source code to really know how to get it to work. That was when I decided to contribute to the project both with documentation and a small fix to the [OpenStack][openstack] salt [driver][salt-openstack-driver], pep8/pyflakes cleanups and documentation.
