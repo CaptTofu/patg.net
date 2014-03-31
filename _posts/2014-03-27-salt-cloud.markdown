@@ -338,7 +338,7 @@ If you wanted to delete the instance, you would simply run:
 
 ## Conclusion
 
-This post was to familiarize the reader with salt-cloud and give a simple demonstration on how salt-cloud can be used and how clean and straight-forward the configuration files are, adhering to the overall vision of [Salt][saltstack] itself. There are far many more options to using salt-cloud that you can view simply by running the command with the --help option as well as read both the [Salt documentation] in general as well as [Salt Cloud documentation][salt-cloud-docs]. This blog will also continue to feature posts pertaining to salt and provisioning tools in general. 
+This post was to familiarize the reader with salt-cloud and give a simple demonstration on how salt-cloud can be used and how clean and straight-forward the configuration files are, adhering to the overall vision of [Salt][saltstack] itself. There are far many more options to using salt-cloud that you can view simply by running the command with the --help option as well as read both the [Salt documentation][salt-docs] in general as well as [Salt Cloud documentation][salt-cloud-docs]. This blog will also continue to feature posts pertaining to salt and provisioning tools in general. 
 
 
 [openstack]: http://openstack.org

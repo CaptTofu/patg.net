@@ -131,7 +131,7 @@ There are a number of other things to add to a [Jekyll][jekyll] site. This secti
 <br />
 ### Comments
 
-What about comments? Well, for me, I decided to use [Discus][discus]. All I had to simply do was to add the div tag that [Discus][discus] provides you from their site to the file ``_layouts/post.html``:
+What about comments? Well, for me, I decided to use [Disqus][disqus]. All I had to simply do was to add the div tag that [Disqus][disqus] provides you from their site to the file ``_layouts/post.html``:
 
     <div class="post">
     {{ content }}
@@ -154,7 +154,8 @@ I wanted my site to be able to be picked up by a number of "Planet" sites. For t
 
 That's all!
 <br />
-# RedCarpet
+
+### RedCarpet
 
 In order to have [Redcarpet][redcarpet], the [markdown][markdown] library that [Github Pages][github-pages] uses which offers features stock [markdown][markdown] doesn't, you can install this module into the ``_plugins`` directory simply by doing the following:
 
@@ -172,9 +173,11 @@ You will also need to install the gem ``albino`` for it to work:
 
     gem install albino
 <br />
+
 ## Summary 
 
-With this post, you should have my example of how I set up my site as a good start for yourself. Mileage may vary, but I do think this should help, along with the various documentation on both [Jekyll][jekyll]'s and [Github Pages][github-pages]` websites to get your own site set up.
+With this post, you should have my example of how I set up my site as a good start for yourself. Mileage may vary, but I do think this should help, along with the various documentation on 
+both [Jekyll][jekyll]'s and [Github Pages][github-pages] websites to get your own site set up.
 
 As I mentioned before, there are far many more options and useful bits of information I could have delved into that even I haven't fully utilized and if I feel inspired upon learning more, you can be certain to look here on my site about those realizations!
  

@@ -1,0 +1,35 @@
+---
+layout: post
+title: "DBD::mysql 4.027 Released"
+date: 2014-03-31 09:00:00
+categories: mysql 
+---
+
+I meant to get this post on my blog last week because I was waiting for the mirrors to updated, but better late than never.
+
+I’m pleased to announce the release of DBD::mysql 4.027. This release isn’t a huge release but has some nice fixes nonetheless. Particularly, some fixes that improve building and installing on OS X.
+
+Per the change log:
+
+2014-13-15 Patrick Galbraith, Michiel Beijen, DBI/DBD community (4.027)
+
+- Added more OS X notes and fixed compiler warnings
+- Skip tests if test database is not present-RT92330 (zefram ``<zefram at fysh dot org>``
+- metacpan.org and search.cpan.org didn't display module POD, caused by fix for RT90101. Reported by Oleg, RT92350.
+
+As before, thank you to Michael Beijen and the community for your help!
+
+You can find the latest in github:
+
+[https://github.com/perl5-dbi/DBD-mysql][github-dbd]
+
+As well as CPAN:
+
+[http://search.cpan.org/~capttofu/DBD-mysql-4.027/lib/DBD/mysql.pm][cpan-dbd]
+
+Thank you for using DBD::mysql!
+
+Patrick Galbraith
+
+[cpan-dbd]: http://search.cpan.org/~capttofu/DBD-mysql-4.027/lib/DBD/mysql.pm
+[github-dbd]: https://github.com/perl5-dbi/DBD-mysql
