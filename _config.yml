@@ -2,6 +2,8 @@ name: patg.net
 markdown: redcarpet
 pygments: true
 #baseurl: /
+permalink: pretty
+paginate: 10
 url: http://patg.net
 markdown: redcarpet
 redcarpet:

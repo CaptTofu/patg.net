@@ -1,0 +1,636 @@
+---
+layout: post
+title: "Docker: Containers for the masses" 
+date: 2014-06-05 12:00:00
+categories: containers,virtualization,docker
+---
+
+# Docker: containers for the masses
+
+For several months now, I've been meaning to post to this blog an entry about [Docker][Docker]. My primary tasks within the HP Advanced Technology Group over the last few months have been to research both [Docker][Docker] and [Ansible][Ansible]. This included me realizing I wanted to add a docker_facts module to Ansible as well as present a talk at AnsibleFest NYC in May. Since I have been wanting to write about my work, I have wanted to have something for readers to refer back to in order to give both context as well as some basic understanding about one of the core components of my work so as to avoid any revisitation of the basics and have a link to refer back to, hence this post!
+
+## What are containers and how do they work?
+
+A container is an operating-system level virtualization method that provides a completely isolated environment, what would appear to be its own system that runs on a single host. It gives the user the ability to have and environment to do whatever is needed, in particular develop and run applications having the necessary resources and environment.
+
+There are numerous types of container mechanisms and technologies such as chroot, [OpenVZ][openvz], [Parallels][parallels], [FreeBSD Jail][freebsd_jail], Linux Containers ([LXC][lxc]), and [libcontainer][libcontainer], which is the default execution environment.
+
+The basic idea of a container is to contain a process or set of processes such that a they run in a container and appear to have their own PID and are not visible outside of the container. This also means networking, users, disk, and other aspects that make an environment usable. This isolation is made possible on Linux using a number of kernel features: [kernel namespaces][kernel_features] (network, user, IPC, uts, PID, and mount), [cgroups][cgroups], Apparmor/SELinux profiles, and secomp policies.
+
+## What is [Docker][Docker]?
+
+As described on the website [Docker.io][Docker.io] run by [Docker.inc][Docker.inc] (formerly DotCloud), and corporate entity behind the Docker project, [Docker][Docker] is a "an easy, lightweight virtualized environent for portable applications". To elaborate, [Docker][Docker] is an application the extends containers (as opposed to virtual machines). Specifically, its value is that is makes it incredibly easy to manage containers and make it possible to deploy applications in manageable units that can run anywhere. The days of having to deal with the hassle of application dependencies across various Linux variants or even different types of virtual machines or hardware are now made trivial. With Docker, you can build your application in a container that runs on your laptop or on a virtual machine and be assured that it can also run in any environment. This truly is revolutionary in terms of software development, testing and deployment.
+
+[Docker][Docker] consists of (1) a daemon that is run that is interacted through a RESTful API using the (2) [Docker][Docker] command line interface. This CLI also includes the ability to search and "pull" images from both (3) public and private [Docker][Docker] image repositories.
+
+
+
+## What is the difference between containers and virtual machines?
+
+One of the first questions that is often asked, especially considering the prevalent use of virtual machines (VM) is "what is the difference between virtual machines and containers?". The answer simply is that a virtual machine requires some sort of emulation layer or hypervisor complete with an OS installation for each VM whereas a container uses features in the Linux kernel (3.x) to provide an isolated virtual environment-- disk, memory, networking, etc., on the same OS, using the OS in question and not requiring an install of anything other than the files requires for your application.
+
+If you think about this, consider your application in terms of what files on disk it requires as well as considering what processes are required when instantiated using a container, is far less less disk space and memory than is required to run on a virtual machines with all of its own resource prerequisites.
+
+The next question that is commonly asked: which of the two is better? The answer is: neither. It really depends what you are trying to do -- each has its purpose. Sometimes, a virtual machine is needed to provide an environment that is satisfied with a full, complete OS installation and other associated functionalities while in other applications, in the case of [Docker][Docker], requirements are satisfied with an isolated environment for developing an application and developers wish to ship the application -- either to a testing group or even a customer-- as a single unit. Those are two such use cases among countless others for both virtual machines and containers that illustrate some of what each is suited for.
+
+One other use case for a virtual machine: to run [Docker][Docker] on, particularly on non-Linux OSs!
+
+
+-- insert image used in slides for VM vs. container --
+
+## Why Docker?
+
+Why would you want to use [Docker][Docker]? There are numerous reasons that I could cite an d some simple Google searches and reading would explain. My experiences in using it allowed me to draw my own conclusions:
+
+### Docker is Fast!
+
+I was very accustomed to thinking in terms of virtual machines -- concepts and terminology, coming from a background where on a daily basis, virual machines would solve so many of my development needs-- whether it was running VMware on a laptop with a development virtual machine for my various projects or working on various seplatform service applications that required automation and provisioning of numerous virtual machines on HP Cloud (Nova).
+
+Particlarly with automation of virtual machines on the cloud, testing deployments using either Chef or SaltStack and the required waiting for a run to finish and to start seeing how the application as a whole could often take a long time and at times resemble watching paint dry.
+
+When I first started investigating [Docker][Docker], I would provision numerous containers to get a feel for how it worked with SaltStack and Ansible. The thing that struck me the most was how fast launching containers is. This is because containers don't require an OS installation, hence not require having to boot an OS. A container consists of only the files and processes that an application requires, so launching a container takes as how long as it takes for your application to start.
+
+### Docker is simple
+
+Simply put, [Docker][Docker] is very simple to install, configure, and use. Their [installation page][docker_installation] covers installing [Docker][Docker] on any number of Linux variants as well as other OSs using virtual machines.
+
+Once Docker is up and running, pulling images from the public [Docker][Docker] image repository is a snap which you can then quickly deploy containers from, make changes and create your own images, and another swath of icing on the cake: push up your images to share with others on the public [Docker][Docker] image repository.
+
+The [Docker][Docker] command-line tool is simple to use, intuitive and offers plenty of help for the numerous sub-commands.
+
+### Docker is a great tool for developers
+
+Virtual machines have always been useful to me for doing local development work on a workstation or laptop. I usually end up setting up my virtual machine in a very particular way and hesitate to modify it or do something that my jeopardize how it's set up. If I have to create a new virtual machine, I have to go through the motions of installing the OS and setting up the virtual machine with the specific things I expect. I have found since using Docker, that my containers are much more "disposable" than the virtual machines I use. Plus, they take far fewer resources both in terms of disk and memory. I can run more of them and keep more images on disk than I would with a virtual machine. One thought might be "why not just use the cloud?". That's one possible solution to having to run virtual machines locally, but sometimes, I would prefer to not have to run things externally for a number of reasons. Docker solves the need to have a quick environment I can use to my liking and dispose of if I need to as well as commit along the way having any number of images representative of a point in time of my environment.
+
+### Docker works well and has plugins for the varous automation tools
+
+Because of [Docker][Docker]'s popularity, developers of automation tools have written plugins and functionality for [Docker][Docker]:
+
+- [Ansible][Ansible] : [docker][docker_ansible] module, [docker_image][docker_image_ansible] module, [docker dynamic inventory plugin][docker_inventory_ansible]: http://docs.ansible.com/docker_image_module.html
+- [SaltStack][SaltStack] : [salt.states.dockerio][salt_states_dockerio]
+- [Puppet][SaltStack]: [gareth-docker][gareth-docker] module
+- [Chef][Chef]: [Chef and Docker][chef_docker]
+
+
+## Terminology: Containers and Images
+
+Getting terminology correct is important in discussing technology. For me, I still have a slip of tongue and say "instance" when I mean "container" because my experience was working with virtual machines up until recently.
+
+With [Docker][Docker], part of what makes it incredibly useful is the ability to easily create from running containers what are called [Docker][Docker] images. These are the read-only component, which can also be though of as templates for Docker containers, that when run, are a given container, the writeable component.
+
+When using Docker, you start out with a base image which is your starting point in building derived images. An image you create from a running container, each time you commit, is comprised the "deltas", so to speak. An usage pattern would be that you might start out with a simple base image that contains a stock Linux environment. Then install a web server, along with your application. When the container is satisfactory representative of what comprises a running version of your application you would then commit that container as an image. The change that was committed, or what I previously mentioned as being thought of as a "delta", is given a unique 256-bit ID (64 hex characters). Subsequent commits are given their own IDs and Docker provides a way to view an image and see its history and have a hierarchical view of the image.
+
+As previously stated, containers, since they only require the files specific to that applicaiton (code, libraries, etc) and are defined by specific processes versus an entire OS and its processes, require far less disk space and fewer resources, hence it's possible to have on disk many more images and run many more containers than VM technology would accomodate.
+
+One can use the [Docker][Docker] CLI to search for any number of images to use as-is or to modify and build images from.
+
+## Installing and configuring Docker
+
+The [installation][docker_install] directions on the [Docker website][Docker] are excellent and provide instructions for the various Linux distributions as well as running on virtual machines on non-Linux OSs. Following their instructions, the only thing variance from the stock installation instructions was to run the [Docker][Docker] daemon as a service port 4243 so that I can talk to the [Docker][Docker] daemon running on multiple cartridges on a Moonshot box running [Ansible][Ansible] playbooks. This also makes it possible to connect to Docker locally as a non-privileged user. Additionally, containers need to use 0.0.0.0 when binding container ports so it will be possible to connect to a container running on one cartridge from another server. The following was added to the end of the file /etc/defaults/docker:
+
+    DOCKER_OPTS="--ip=0.0.0.0 --host=tcp://0.0.0.0:4243”
+
+
+## Sign up for an account
+
+So you can share your images as well as follow this blog post, it is recommended that you sign up for an Docker account. Follow the '[sign up][docker_signup]' link next to 'login' in the upper right hand corner of the page. This will be a name you want to use to tag your images with and how they will be searched in 
+## Using Docker
+
+As alread mentioned, the [Docker CLI][docker_cli] was very intuitive and has a well-documented help facility that can simply be invoked by running
+
+    $ docker help subcommand
+
+For instance, if one were to need to find otu the options on building images:
+
+    $ docker help build
+
+    Usage: docker build [OPTIONS] PATH | URL | -
+
+    Build a new container image from the source code at PATH
+
+      --no-cache=false   Do not use cache when building the image
+      -q, --quiet=false  Suppress the verbose output generated by the containers
+      --rm=true          Remove intermediate containers after a successful build
+      -t, --tag=""       Repository name (and optionally a tag) to be applied to the resulting image in case of success
+
+The following shows basic usage of Docker and some common tasks that a user would perform.
+
+## Pulling a base Ubuntu image
+
+The first thing to do was to build images based off of Ubuntu. To obtain a base image, and in this case, the Ubuntu base image, I did a search to find out the image tag in order to  pull the Ubuntu image from the [Docker][Docker] image repository:
+
+    $ docker search ubuntu
+    NAME                         DESCRIPTION                                     STARS   OFFICIAL   TRUSTED
+    ubuntu                       Official Ubuntu base image                      171
+    stackbrew/ubuntu             Barebone ubuntu images                          36
+    crashsystems/gitlab-docker   A trusted, regularly updated build of GitL...   19                 [OK]
+    dockerfile/ubuntu            Trusted Ubuntu (http://www.ubuntu.com/) Bu...   13                 [OK]
+    ...<snip>...
+
+The list was extensive, and the first one selected:
+
+    $ docker pull ubuntu
+    Pulling repository ubuntu
+    3db9c44f4520: Download complete
+    6006e6343fad: Download complete
+    d2099a5ba6c5: Pulling dependent layers
+    5cf8fd909c6c: Pulling dependent layers
+    7656cbf56a8c: Pulling dependent layers
+    cc0067db4f11: Pulling dependent layers
+    511136ea3c5a: Download complete
+    086a54ed1641: Download complete
+    5e9838970f44: Download complete
+    c47d897f1a44: Download complete
+    845a7ff0bf5a: Downloading 2.027 MB/40.16 MB 3m59s
+    e41f31e92d60: Downloading 1.986 MB/39.53 MB 4m6s
+    101e9f33c3dc: Downloading  7.08 MB/39.17 MB 1m51s
+    6cfa4d1f33fb: Download complete
+    35f6dd4dd141: Downloading 1.582 MB/67.48 MB 4m42s
+    7baf0ef6f14a: Download complete
+    e497c7c1bfbb: Download complete
+    ... <snip> ...
+
+## Launching a container
+
+Once the base Ubuntu image was pulled, it was possible to launch a container using it. In this example, the flags -i -t were specified to indicate running interactively and to use a pseudo terminal. Later, it will be showin how to run a container that runs sshd that can be logged into
+
+    $ docker -it run ubuntu /bin/bash
+    root@849e71a53c2c:/#
+
+At this point, changes can be made to the container and any commits will create images representative of the changes made.
+
+One the session is exited, the container also exits.
+
+## Analysing your container 
+
+You can now verify and find out the container ID of the container you are running. In another terminal, you can run the following:
+
+    $ docker ps
+    CONTAINER ID  IMAGE         COMMAND    CREATED        STATUS        PORTS  NAMES
+    849e71a53c2c  ubuntu:14.04  /bin/bash  2 minutes ago  Up 2 minutes         loving_bardeen
+
+You could also run 'ps' with a -a flag to see all containers you have run both running and terminated:
+
+    $ docker ps -a
+    CONTAINER ID  IMAGE         COMMAND    CREATED        STATUS                     PORTS  NAMES
+    7f5881636580  ubuntu:14.04  /bin/bash  3 seconds ago  Exited (0) 1 seconds ago          clever_shockley
+    94d4341afefa  ubuntu:14.04  /bin/bash  7 seconds ago  Exited (0) 4 seconds ago          happy_bardeen
+    849e71a53c2c  ubuntu:14.04  /bin/bash  17 hours ago   Up 17 hours                       loving_bardeen
+
+As you can see above, the container you are currently running is still shown as running, and the author of this blog has left it up for 17 hours so fire while writing this part of the post!
+
+## Connecting to a container
+
+When you run a virtual machine, you are accustomed to the idea of being able to ssh into it. If you run Docker as in the above example, interactively, you obviously are running a shell that allows you to do work inside of your container. You can also connect to it:
+
+    $ docker attach 849e71a53c2c
+    root@849e71a53c2c:/#
+
+## Inspecting a container
+
+One command that will be often used is the inspection command. This command, when run, will produce a large JSON data structure with every bit of information you would ever want to know about the container. Most often, when I use it, I have wanted to find out either the IP address or what ports docker uses for exposed ports:
+
+    $ docker inspect 849e71a53c2c
+    [{
+      "ID": "849e71a53c2ce2d696cb71782bb25528e503c87a150ae87efa71c6265c027879",
+      "Created": "2014-06-01T11:44:12.117743232Z",
+      "Path": "/bin/bash",
+      "Args": [],
+      "Config": {
+          "Hostname": "849e71a53c2c",
+          "Domainname": "",
+          "User": "",
+          "Memory": 0,
+          "MemorySwap": 0,
+          "CpuShares": 0,
+          "AttachStdin": true,
+          "AttachStdout": true,
+          "AttachStderr": true,
+          "PortSpecs": null,
+          "ExposedPorts": null,
+          "Tty": true,
+          "OpenStdin": true,
+          "StdinOnce": true,
+          "Env": [
+              "HOME=/",
+              "PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+          ],
+          "Cmd": [
+              "/bin/bash"
+          ],
+          "Image": "ubuntu",
+          "Volumes": null,
+          "WorkingDir": "",
+          "Entrypoint": null,
+          "NetworkDisabled": false,
+          "OnBuild": null
+      },
+      "State": {
+          "Running": false,
+          "Pid": 0,
+          "ExitCode": 0,
+          "StartedAt": "2014-06-01T11:44:12.393165329Z",
+          "FinishedAt": "2014-06-02T08:27:24.095030218Z"
+      },
+      "Image": "5cf8fd909c6ccc61199df6dbeb165767b83c23842ef49ca3ef3b81ece1bdce4f",
+      "NetworkSettings": {
+          "IPAddress": "",
+          "IPPrefixLen": 0,
+          "Gateway": "",
+          "Bridge": "",
+          "PortMapping": null,
+          "Ports": null
+      },
+      "ResolvConfPath": "/etc/resolv.conf",
+      "HostnamePath": "/var/lib/docker/containers/849e71a53c2ce2d696cb71782bb25528e503c87a150ae87efa71c6265c027879/hostname",
+      "HostsPath": "/var/lib/docker/containers/849e71a53c2ce2d696cb71782bb25528e503c87a150ae87efa71c6265c027879/hosts",
+      "Name": "/loving_bardeen",
+      "Driver": "aufs",
+      "ExecDriver": "native-0.2",
+      "MountLabel": "",
+      "ProcessLabel": "",
+      "Volumes": {},
+      "VolumesRW": {},
+      "HostConfig": {
+          "Binds": null,
+          "ContainerIDFile": "",
+          "LxcConf": [],
+          "Privileged": false,
+          "PortBindings": {},
+          "Links": null,
+          "PublishAllPorts": false,
+          "Dns": null,
+          "DnsSearch": null,
+          "VolumesFrom": null,
+          "NetworkMode": "bridge"
+      }
+    }]
+
+## Committing a container and creating images
+
+As mentioned in the previous example, it would have been possible to commit the container to an image. In order to do this, one will need the container ID. To find this, one of the most used commands you will familiarize yourself with is the docker ps command:
+
+    $ docker ps
+    CONTAINER ID  IMAGE         COMMAND    CREATED        STATUS        PORTS  NAMES
+    849e71a53c2c  ubuntu:14.04  /bin/bash  2 minutes ago  Up 2 minutes         loving_bardeen
+
+Once the container ID is known, the container can be committed to an image:
+
+    $ docker commit 849e71a53c2c capttofu/ubuntu_example
+    f54ee24a549a4680966d12db4071da61470ff2c979b0177405f07f860d08ab63
+
+To verify that there is now an image created from the previous step
+
+    patg@ubuntu:~$ docker images
+    REPOSITORY                TAG      IMAGE ID      CREATED        VIRTUAL SIZE
+    capttofu/ubuntu_example   latest   f54ee24a549a  9 minutes ago  274.3 MB
+    ubuntu                    12.10    6006e6343fad  2 days ago     172.2 MB
+    ubuntu                    quantal  6006e6343fad  2 days ago     172.2 MB
+    ubuntu                    13.10    d2099a5ba6c5  2 days ago     180.2 MB
+    ubuntu                    saucy    d2099a5ba6c5  2 days ago     180.2 MB
+    ubuntu                    14.04    5cf8fd909c6c  2 days ago     274.3 MB
+    ubuntu                    latest   5cf8fd909c6c  2 days ago     274.3 MB
+    ubuntu                    trusty   5cf8fd909c6c  2 days ago     274.3 MB
+    ubuntu                    13.04    7656cbf56a8c  2 days ago     169.4 MB
+    ubuntu                    raring   7656cbf56a8c  2 days ago     169.4 MB
+    ubuntu                    12.04    cc0067db4f11  2 days ago     210.1 MB
+    ubuntu                    precise  cc0067db4f11  2 days ago     210.1 MB
+
+It's also possible to see the history of this newly-created image, showing what changes it is comprised of:
+
+    $ docker history capttofu/ubuntu_example
+    IMAGE               CREATED             CREATED BY                                      SIZE
+    f54ee24a549a        13 minutes ago      /bin/bash                                       0 B
+    5cf8fd909c6c        2 days ago          /bin/sh -c apt-get update && apt-get install    81.61 MB
+    e497c7c1bfbb        2 days ago          /bin/sh -c sed -i 's/^#\s*\(deb.*universe\)$/   1.903 kB
+    7baf0ef6f14a        2 days ago          /bin/sh -c echo '#!/bin/sh' > /usr/sbin/polic   194.5 kB
+    35f6dd4dd141        2 days ago          /bin/sh -c #(nop) ADD file:8162d8bad0054f4038   192.5 MB
+    511136ea3c5a        11 months ago
+
+## Pushing up your image
+
+Once you have an image built the way you want it and think it's ready for sharing, you can push it up to the public [Docker][Docker] [image repo][docker_image_repo]:
+
+    $ docker push capttofu/ubuntu_example
+    $ docker push capttofu/ubuntu_example
+    The push refers to a repository [capttofu/ubuntu_example] (len: 1)
+    Sending image list
+    Pushing repository capttofu/ubuntu_example (1 tags)
+    Image 511136ea3c5a already pushed, skipping
+    Image 35f6dd4dd141 already pushed, skipping
+    Image 7baf0ef6f14a already pushed, skipping
+    Image e497c7c1bfbb already pushed, skipping
+    Image 5cf8fd909c6c already pushed, skipping
+    f54ee24a549a: Image successfully pushed
+    Pushing tag for rev [f54ee24a549a] on {https://registry-1.docker.io/v1/repositories/capttofu/ubuntu_example/tags/latest}
+
+
+## Building images using a Dockerfile
+
+While it is certainly easy to launch a base image, modify it and then commit the changes, it's not something tenable for the long-term purposes of automation and everyday work. This is where using a "[Dockerfile][dockerfile]" is the solution. A "[Dockerfile][dockerfile]" is another great example on the utility of Docker and analogous to a Makefile. It is a simple file that describes a set of instructions for how an image is to be built. For instance, below is a simple [Dockerfile][dockerfile] that can be used to install Percona XtraDB Cluster:
+
+    # Percona XtraDB Cluster Dockerfile
+    #
+    # VERSION    0.0.1
+    #
+    FROM ubuntu:13.04
+    MAINTAINER Patrick aka CaptTofu Galbraith , patg@patg.net
+
+    # Add the Percona apt repository
+    RUN apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
+    ADD percona.list /etc/apt/sources.list.d/percona.list
+
+    # Update distribution
+    RUN apt-get update \
+          && apt-get upgrade -y \
+          && apt-get clean
+
+    # Install ssh, vim and PXC packages
+    RUN DEBIAN_FRONTEND=noninteractive apt-get install -y ssh vim percona-xtradb-cluster-client-5.6 percona-xtradb-cluster-server-5.6
+
+    # set up ssh and authorized keys so one can ssh into this system
+    RUN mkdir /var/run/sshd
+    RUN mkdir /root/.ssh
+    RUN chmod 700 /root/.ssh
+    ADD docker.pem.pub /root/.ssh/authorized_keys
+    RUN chown -R root:root /root/.ssh
+
+    # add entrypoint script used to start processes
+    ADD entrypoint.sh /usr/local/sbin/entrypoint.sh
+
+    # Expose SSH and MySQL ports
+    EXPOSE 22 3306 4444 4567 9200
+
+    # Set the entrypoint to entrypoint.sh
+    ENTRYPOINT ["/usr/local/sbin/entrypoint.sh"]
+
+As you can see, there are several instructions in this [Dockerfile][dockerfile] that you would commonly use. The RUN instruction is used to set up apt repositories and update the system, the ADD instruction which adds a file to the specific location and name, in this case a script used as an ENTRYPOINT instruction, which is what the container be executed as. The EXPOSE instruction is used to inform docker which ports the container will listen on, in this case ports needed for ssh and Galera replication and automatic failover setup.
+
+Do take note that since the ENTRYPOINT instruction is used, this container will be run differently than the previous example above. This will be explained later in this post. 
+
+## Building an image using a Dockerfile
+
+Building the image is painfully simple:
+
+    $ docker build -t "capttofu/pxc" /my/path/to/pxc/dockerfile/
+    Uploading context 6.656 kB
+    Uploading context
+    Step 0 : FROM ubuntu
+     ---> 5cf8fd909c6c
+    Step 1 : MAINTAINER Patrick aka CaptTofu Galbraith , patg@patg.net
+     ---> Running in 3d950f3de14f
+     ---> 5767d785bbcd
+    Removing intermediate container 3d950f3de14f
+    Step 2 : RUN apt-key adv --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
+     ---> Running in e59f5947a662
+    Executing: gpg --ignore-time-conflict --no-options --no-default-keyring --homedir /tmp/tmp.UqCbfHSVSa --no-auto-check-trustdb --trust-model always --keyring /etc/apt/trusted.gpg --primary-keyring /etc/apt/trusted.gpg --keyserver keys.gnupg.net --recv-keys 1C4CBDCDCD2EFD2A
+    gpg: requesting key CD2EFD2A from hkp server keys.gnupg.net
+    gpg: key CD2EFD2A: public key "Percona MySQL Development Team <mysql-dev@percona.com>" imported
+    gpg: Total number processed: 1
+    gpg:               imported: 1
+     ---> bfee11a71dae
+    Removing intermediate container e59f5947a662
+    Step 3 : ADD percona.list /etc/apt/sources.list.d/percona.list
+     ---> fb16cc14e7d1
+    Removing intermediate container 79beea842c16
+    Step 4 : RUN apt-get update      && apt-get upgrade -y      && apt-get clean
+     ---> Running in 8cadef9f201f
+    Ign http://archive.ubuntu.com trusty InRelease
+    Get:1 http://repo.percona.com raring InRelease [15.3 kB]
+    < ... snip ... many lines of apt-get update output .. >
+    Processing triggers for ureadahead (0.100.0-16) ...
+    Processing triggers for initramfs-tools (0.103ubuntu4.1) ...
+     ---> f439c7087235
+    Removing intermediate container 8cadef9f201f
+    Step 5 : RUN DEBIAN_FRONTEND=noninteractive apt-get install -y libterm-readline-gnu-perl ssh vim percona-xtradb-cluster-client-5.6 percona-xtradb-cluster-server-5.6
+     ---> Running in 21b9a5ebcac5
+    Reading package lists...
+    Building dependency tree...
+    Reading state information...
+    The following extra packages will be installed:
+      ca-certificates iproute krb5-locales libaio1 libck-connector0
+    < ... snip ... many lines of apt-get install output ... >
+    Processing triggers for libc-bin (2.19-0ubuntu6) ...
+    Processing triggers for ca-certificates (20130906ubuntu2) ...
+    Updating certificates in /etc/ssl/certs... 164 added, 0 removed; done.
+    Running hooks in /etc/ca-certificates/update.d....done.
+    Processing triggers for ureadahead (0.100.0-16) ...
+     ---> 096ffef048d9
+    Removing intermediate container 21b9a5ebcac5
+    Step 6 : RUN mkdir /var/run/sshd
+     ---> Running in 3a4fcf5d7f29
+     ---> 072bb5f6ba3b
+    Removing intermediate container 3a4fcf5d7f29
+    Step 7 : RUN mkdir /root/.ssh
+     ---> Running in 022b27983f27
+     ---> 64fef47cb18b
+    Removing intermediate container 022b27983f27
+    Step 8 : RUN chmod 700 /root/.ssh
+     ---> Running in 49aedf1a4343
+     ---> 8fc7cf6bd075
+    Removing intermediate container 49aedf1a4343
+    Step 9 : ADD docker.pem.pub /root/.ssh/authorized_keys
+     ---> a7e9f80410b5
+    Removing intermediate container 4d44374c82fe
+    Step 10 : RUN chown -R root:root /root/.ssh
+     ---> Running in 424c151e8281
+     ---> 6edc721b9876
+    Removing intermediate container 424c151e8281
+    Step 11 : ADD entrypoint.sh /usr/local/sbin/entrypoint.sh
+     ---> d9f9a1a92d99
+    Removing intermediate container 26f08f5661e3
+    Step 12 : EXPOSE 22 3306 4444 4567 9200
+     ---> Running in f873a3b78049
+     ---> cfb3e7275caa
+    Removing intermediate container f873a3b78049
+    Step 13 : ENTRYPOINT ["/usr/local/sbin/entrypoint.sh"]
+     ---> Running in ec5b19d1bbd0
+     ---> 9a9aa0bb48b8
+    Removing intermediate container ec5b19d1bbd0
+    Successfully built 289923fa1196
+
+After this is completed, there is an image tagged as capttofu/pxc to use. You can run "docker images" to see it.
+
+## Building images with running services
+
+In my testing, I found that I prefered building containers with running services, particularly sshd, that would allow me to access a running container either through SSH or a database connection (think PaaS applications, DBaaS, etc). To do this, you will need to ensure the service of your choice is started when the container runs. As seen in previous exemples in this post, a shell script called "entrypoint.sh" was used. An example of a simple entrypoint script that starts ssh is:
+
+    #!/bin/bash
+
+    /usr/sbin/sshd -D
+
+If this script is added to the container, set with appropriate permissions, it will run when the container is launched, allowing you to ssh into the container. Note that other commands can be added to this. For instance, in the case of the Percona XtraDB Cluster container, "service start mysql" is also added. 
+
+To launch images with entrypoints, you issue "docker run" differently, with the "-d" flag, which means "detach"
+
+    $ docker run -d capttofu/pxc
+    $ docker run -d --name pxc1 289923
+
+Note: In the example above, only the first 6 characters of the image ID was used. As long as the string used in any Docker command is used that pertains to an ID, as long as it is unique, it will work. Had there been another image ID with the same 6 characters, it would have been ambiguous and failed.
+ 
+The next thing that needs to be done is to ensure the container is running:
+
+    $ docker ps
+CONTAINER ID        IMAGE               COMMAND                CREATED             STATUS              PORTS                                            NAMES
+59b7425cd5cf        289923fa1196        "/bin/sh -c "/usr/lo   2 seconds ago       Up 1 seconds        22/tcp, 3306/tcp, 4444/tcp, 4567/tcp, 9200/tcp   pxc1
+
+Then find out the IP address of the container by grepping the output of "docker inspect":
+
+    $ docker inspect pxc1|grep IPA
+          "IPAddress": "172.17.0.2",
+
+And ssh into the container!
+
+    $ ssh root@172.17.0.2
+
+    root@59b7425cd5cf:~# ps aux
+    USER  PID  %CPU %MEM VSZ     RSS TTY      STAT START   TIME COMMAND
+    root  1    0.0  0.0  4444    628 ?        Ss   11:25   0:00 /bin/sh -c "/usr/local/sbin/entrypoint.sh" /bin/sh -c #(n
+    root  11   0.0  0.0  17908   1436 ?       S    11:25   0:00 /bin/bash /usr/local/sbin/entrypoint.sh
+    root  12   0.0  0.0  52256   2876 ?       S    11:25   0:00 /usr/sbin/sshd -D
+    root  13   0.0  0.0  75648   3720 ?       Ss   11:25   0:00 sshd: root@pts/0
+    root  25   0.0  0.0  18168   2080 pts/0   Ss   11:25   0:00 -bash
+    root  72   0.0  0.0  4444    776 pts/0    S    11:33   0:00 /bin/sh /usr/bin/mysqld_safe
+    mysql 145  2.3  8.9  1143332 461120 pts/0 Sl   11:33   0:00 /usr/sbin/mysqld --basedir=/usr --datadir=/var/lib/mysql
+    root  186  0.0  0.0  15572   1196 pts/0   R+   11:33   0:00 ps aux
+
+See above the reading of processes. This provides a good example of how when within a container, it's apparent how the numer of processes is limited to only the application in question (and SSH). To me, this is great technology, and something that I wish I had had available years ago!
+
+## About ports exposure and publishing
+
+In the interest if wrapping up this post but still covering something of importance, is the next bit of information to cover pertains to ports and how they are exposed. In an upcoming post detailing my work with Docker and Ansible, I provide a demonstration of working with Docker across 45 Moonshot cartridges (in other words, bare-metal servers). To be able to reach Docker containers from external hosts, I mentioned above how there is a Docker setting to set containers to run bound to 0.0.0.0. The other required piece of this requires having Docker bind a given port of the container to a port on the Docker host. For instance, I want to be able to SSH into on my containers from an external host, from HostA to where containers on HostB. HostB would be running one or more containers and each would have sshd running on port 22. How do I ssh to any one of the containers on HostB and reach the correct container yet know what SSH port to use? The following example shows how this is done.
+
+First, one can specify publish ports with the "-p" flag:
+
+    $ docker run -d -p 48522:22 --name pxc1 289923
+    05253564fe90ae9e473f1ac34104e61f53c5db86d24e21266c8fefb6386477bb
+
+Or, allow [Docker][Docker] to publish all exposed ports, automatically chosing the port:
+
+    $ docker run -d -P --name pxc2 289923
+    ddcceffb801ae6b2e9c1004187a784eaa2e8f9f66f9965898ef86227533c0271
+
+To view the ports mapped on the host to the Docker ports for port 22:
+
+    $ docker ps
+    CONTAINER ID  IMAGE        COMMAND               CREATED        STATUS        PORTS                                                                                                                       NAMES
+    ddcceffb801a  289923fa1196 "/bin/sh -c "/usr/lo  2 seconds ago  Up 2 seconds  0.0.0.0:49180->22/tcp, 0.0.0.0:49181->3306/tcp, 0.0.0.0:49182->4444/tcp, 0.0.0.0:49183->4567/tcp, 0.0.0.0:49184->9200/tcp   pxc2
+    05253564fe90  289923fa1196 "/bin/sh -c "/usr/lo  22 seconds ago Up 22 seconds 3306/tcp, 4444/tcp, 4567/tcp, 9200/tcp, 0.0.0.0:48522->22/tcp                                                               pxc1
+
+As one can see, one would use port 48522 on the host OS to connect to the container "pxc1" and port 49180 on the container "pxc2".
+
+"docker inspect" can also be used, though is much more verbose. The port mapping found within several entries of the output for the container in question.
+
+(Note: output formatted and reduced for instructional purposes)
+
+    $ docker inspect pxc1
+    [{
+      "ID": "05253564fe90ae9e473f1ac34104e61f53c5db86d24e21266c8fefb6386477bb",
+      "NetworkSettings": {
+          "IPAddress": "172.17.0.2",
+          "Ports": {
+              "22/tcp": [
+                  {
+                      "HostIp": "0.0.0.0",
+                      "HostPort": "48522"
+                  }
+              ],
+              "3306/tcp": null,
+              "4444/tcp": null,
+              "4567/tcp": null,
+              "9200/tcp": null
+          }
+      },
+      "HostConfig": {
+          "PortBindings": {
+              "22/tcp": [
+                  {
+                      "HostIp": "0.0.0.0",
+                      "HostPort": "48522"
+                  }
+              ],
+              "3306/tcp": null,
+              "4444/tcp": null,
+              "4567/tcp": null,
+              "9200/tcp": null
+          },
+    }]
+
+## Cleanup 
+
+Finally, there are several ways to stop containers, as well as some good house-keeping:
+
+Sends a SIGTERM, and after a grace period, SIGKILL:
+
+    $ docker stop <container>
+
+Sends a SIGKILL:
+
+    $ docker kill <container>
+
+The above two, you can restart with
+
+    $ docker start <container>
+
+If you find that by running "docker ps -a" that you have a lot of stopped containers you no longer need and need to clean up, you would run:
+
+    $ docker rm <container>
+
+If you want to be lazy (and caveat emptor the author is not responsible!)
+
+    $ docker rm $(docker ps -a -q)
+
+Also, you may wish to clean up containers.
+
+    $ docker rmi <image>
+
+## Summary
+
+This post was meant as an introduction to Docker and an attempt at providing the reader information on this new and exciting technology-- what [Docker][Docker] is, why one would want to use it, examples of how to use Docker with links to numerous sources of information about [Docker][Docker].
+
+It should be obvious to a developer reading this post what the possibilities are with Docker and how it could revolutionize software development and delivery! 
+
+There is so much more to discuss about [Docker][Docker] and I intend to continue posting more information about Docker in the future.
+
+## PS: other interseting projects related to Docker
+
+Here is a list of some interesting informational sites and projects that relate to and/or use Docker
+
+- [Project Solum][Solum]: An OpenStack Related Stackforge project designed to make cloud services easier to consume and integrate into your application development process. Solum is planning to pursue incubation as an OpenStack project upon achievement of development milestones.
+- [My slide presentation] from AnsibleFest about Ansible and Docker
+- [How to manage Linux containers with Nova][nova_containers_openstack]
+- Docker-based OpenStack [development environment][dockenstack]
+- OpenStack [Docker driver][openstack_docker]
+- [OpenShift][openshift]
+
+
+
+
+[Docker.inc]: http://docker.com
+[Docker]: http://docker.io
+[docker_signup]: https://www.docker.io/account/signup/
+[kernel_features]: http://www.kbartocha.com/tag/linux-kernel-namespaces/
+[cgroups]: https://access.redhat.com/site/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Resource_Management_Guide/ch01.html
+[libcontainer]: http://blog.docker.com/2014/03/docker-0-9-introducing-execution-drivers-and-libcontainer/
+[lxc]: https://linuxcontainers.org/
+[parallels]: http://www.parallels.com/
+[openvz]: http://openvz.org/Main_Page
+[freebsd_jail]: http://www.freebsd.org/doc/handbook/jails.html
+[dockerfile]: http://docs.docker.io/reference/builder/
+[docker_ansible]: http://docs.ansible.com/docker_module.html
+[docker_image_ansible]: http://docs.ansible.com/docker_image_module.html
+[docker_inventory_ansible]: https://github.com/ansible/ansible/blob/devel/plugins/inventory/docker.yml
+[salt_states_dockerio]: http://docs.saltstack.com/en/latest/ref/states/all/salt.states.dockerio.html
+[garety-docker]: https://forge.puppetlabs.com/garethr/docker
+[chef_docker]: http://www.getchef.com/blog/2014/04/23/chef-docker-automating-container-workflows/
+[Ansible]: http://www.ansible.com/home
+[SaltStack]: http://www.saltstack.com/
+[Puppet]: http://puppetlabs.com/puppet/puppet-enterprise?gclid=CKvX14_85b4CFSgQ7AodhlMAwQ
+[Chef]: http://www.getchef.com/chef/
+[Solum]: https://wiki.openstack.org/wiki/Solum
+[ansible_galaxy]: https://galaxy.ansible.com
+[ansible_docker_presentation]: http://www.slideshare.net/PatrickGalbraith/docker-ansible-34909080
+[nova_containers_openstack]: http://blog.docker.io/2013/06/openstack-docker-manage-linux-containers-with-nova/
+[dockenstack]: https://index.docker.io/u/ewindisch/dockenstack/
+[openstack_docker]: https://wiki.openstack.org/wiki/Docker
+[openshift]: https://www.openshift.com/?sc_cid=70160000000UJArAAO&gclid=COfd-Oz-5b4CFcHm7AodS1gA7Q
