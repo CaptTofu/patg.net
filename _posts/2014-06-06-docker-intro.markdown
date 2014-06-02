@@ -57,7 +57,7 @@ I was very accustomed to thinking in terms of virtual machines; whether it was r
 
 Particlarly with automation of virtual machines on the cloud, testing deployments using either Chef or SaltStack became an exercise in watching paint dry as you waited (and waited) for a run to finish before you could start to see how the application as a whole responded.
 
-When I first started investigating [Docker][Docker], I would provision numerous containers to get a feel for how it worked with SaltStack and Ansible. The thing that struck me the most was how fast launching containers is. Since containers doesn't require an OS installation, you don't have to boot an OS. A container consists of only the files and processes that an application requires, so launching a container only takes however long your application needs to start.
+When I first started investigating [Docker][Docker], I would provision numerous containers to get a feel for how it worked with either SaltStack or Ansible. The thing that struck me the most was how fast launching containers is. Since a container don't require an OS installation, time isn't consumed booting an OS. A container consists of only the files and processes that an application requires, so launching a container only takes however long your application needs to start.
 
 
 ### Docker is simple
