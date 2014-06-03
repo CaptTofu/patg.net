@@ -16,18 +16,20 @@ In addition to their instructions, I needed containers to use 0.0.0.0 when bindi
 
     DOCKER_OPTS="--ip=0.0.0.0"
 
-With this option, it is possible to run containers and have any exposed ports on the container to be bound to ports on the host. There will be more elaboration on this in a later section of this post.
+With this option, it is possible to run containers and have any exposed ports on the container to be bound to ports on the host. There will be more elaboration on this in a later post in this series.
 
 
-## Running the Docker Daemon on a socket or port
+## Running the Docker Daemon: UNIX domain socket or TCP socket
 
-By default, [Docker][Docker] will runs so that it binds to a UNIX socket versus a TCP socket on 127.0.0.1. There is a good reason for this: [Docker][Docker] runs as root. There are risks of cross-site-scripting attacks using a TCP socket if you are not on a completely trusted network or VPN (or both).
+By default, [Docker][Docker] will runs so that it binds to a UNIX domain socket versus a TCP socket on 127.0.0.1. There is a good reason for this: [Docker][Docker] runs as root. There are risks of cross-site-scripting attacks using a TCP socket if you are not on a completely trusted network or VPN (or both).
 
-I recently investigated and ended up demonstrating using [Ansible][Ansible] [modules (see presentation)][ansible_docker_presentation] to manage containers run across 45 cartridges on a Moonshot server. Since the network was behind a VPN, completely trusted, and locked down (even using an internal apt repo) the [Docker][Docker] daemon was set to run as a service on port 4243 so that the [Ansible][Ansible] modules, run via playbooks on a single host, could connect and communicate with these 45 [Docker][Docker] daemons running on each cartridge. This also makes it possible to connect to Docker locally as a non-privileged user. The option for this was set in /etc/defaults/docker:
+I recently investigated and ended up demonstrating using [Ansible][Ansible] [modules (see presentation)][ansible_docker_presentation] to manage containers run across 45 cartridges on a Moonshot server. Since the network was behind a VPN, completely trusted, and locked down (even using an internal apt repo) the [Docker][Docker] daemon was set to run as a service on port 4243 so that the [Ansible][Ansible] modules, run via playbooks on a single host, could connect and communicate with these 45 [Docker][Docker] daemons running on each cartridge. This also makes it possible to connect to Docker locally as a non-privileged user. 
+
+The option for using a TCP socket setting in /etc/defaults/docker:
 
     DOCKER_OPTS="--host=tcp://0.0.0.0:4243”
 
-I will stress again that this was a need for what I had to do for my specific setup and ONLY use a setup like this if you have a secure setup. Also make sure that access to port you use (for instance, 4243 in the example above) is limited to only the host that needs to access it. In my case, it was the host I was running [Ansible][Ansible] playbooks on.
+I will again stress that this was a need for my specific setup from a single host to an HP Moonshot system with 45 cartridges on an internal network that ould only be accessed through a VPN with no external access. ONLY use a setup like this if you have a secure setup. Also make sure that access to port you use (for instance, 4243 in the example above) is limited to only the host that needs to access it. In my case, it was the host I was running [Ansible][Ansible] playbooks on.
 
 
 ## Sign up for an account
