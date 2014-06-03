@@ -12,7 +12,7 @@ Welcome back! This is the second of a series of blog posts on [Docker][Docker]. 
 
 The [installation][docker_install] directions on the [Docker website][Docker] are excellent and provide instructions for the various Linux distributions as well as running on virtual machines on non-Linux OSs.
 
-In addition to their instructions, I needed containers to use 0.0.0.0 when binding container ports so it will be possible to connect to a container running on one cartridge from an external server (external to the [Docker][Docker] host). The following was added to the end of the file /etc/defaults/docker:
+In addition to their instructions, I needed containers to use 0.0.0.0 when binding container ports so it will be possible to connect to a container running on one [cartridge][moonshot_cartridge] from an external server (external to the [Docker][Docker] host). The following was added to the end of the file /etc/defaults/docker:
 
     DOCKER_OPTS="--ip=0.0.0.0"
 
@@ -23,13 +23,13 @@ With this option, it is possible to run containers and have any exposed ports on
 
 By default, [Docker][Docker] will runs so that it binds to a UNIX domain socket versus a TCP socket on 127.0.0.1. There is a good reason for this: [Docker][Docker] runs as root. There are risks of cross-site-scripting attacks using a TCP socket if you are not on a completely trusted network or VPN (or both).
 
-I recently investigated and ended up demonstrating using [Ansible][Ansible] [modules (see presentation)][ansible_docker_presentation] to manage containers run across 45 cartridges on a Moonshot server. Since the network was behind a VPN, completely trusted, and locked down (even using an internal apt repo) the [Docker][Docker] daemon was set to run as a service on port 4243 so that the [Ansible][Ansible] modules, run via playbooks on a single host, could connect and communicate with these 45 [Docker][Docker] daemons running on each cartridge. This also makes it possible to connect to Docker locally as a non-privileged user. 
+I recently investigated and ended up demonstrating using [Ansible][Ansible] [modules (see presentation)][ansible_docker_presentation] to manage containers run across 45 [cartridges][moonshot_cartridge] on a [Moonshot server][moonshot]. Since the network was behind a VPN, completely trusted, and locked down (even using an internal apt repo) the [Docker][Docker] daemon was set to run as a service on port 4243 so that the [Ansible][Ansible] modules, run via playbooks on a single host, could connect and communicate with these 45 [Docker][Docker] daemons running on each [cartridge][moonshot_cartridge]. This also makes it possible to connect to Docker locally as a non-privileged user. 
 
 The option for using a TCP socket setting in /etc/defaults/docker:
 
     DOCKER_OPTS="--host=tcp://0.0.0.0:4243”
 
-I will again stress that this was a need for my specific setup from a single host to an HP Moonshot system with 45 cartridges on an internal network that ould only be accessed through a VPN with no external access. ONLY use a setup like this if you have a secure setup. Also make sure that access to port you use (for instance, 4243 in the example above) is limited to only the host that needs to access it. In my case, it was the host I was running [Ansible][Ansible] playbooks on.
+I will again stress that this was a need for my specific setup from a single host to an [HP Moonshot][moonshot] system with 45 [cartridges][moonshot_cartridge] on an internal network that ould only be accessed through a VPN with no external access. ONLY use a setup like this if you have a secure setup. Also make sure that access to port you use (for instance, 4243 in the example above) is limited to only the host that needs to access it. In my case, it was the host I was running [Ansible][Ansible] playbooks on.
 
 
 ## Sign up for an account
@@ -88,3 +88,5 @@ The next post will cover actual usage of [Docker][Docker].
 [dockenstack]: https://index.docker.io/u/ewindisch/dockenstack/
 [openstack_docker]: https://wiki.openstack.org/wiki/Docker
 [openshift]: https://www.openshift.com/?sc_cid=70160000000UJArAAO&gclid=COfd-Oz-5b4CFcHm7AodS1gA7Q
+[moonshot]: http://h17007.www1.hp.com/us/en/enterprise/servers/products/moonshot/index.aspx#.U0gU2PldXJh?jumpid=ps_r163&k_clickid=AMS|112|61913|169782eb-9c7a-df89-4afe-0000588f5dc0
+[moonshot_cartridge]: http://www8.hp.com/us/en/products/proliant-servers/product-detail.html?oid=5375897#!tab=features
