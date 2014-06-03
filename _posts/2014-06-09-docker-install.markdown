@@ -29,7 +29,7 @@ The option for using a TCP socket setting in /etc/defaults/docker:
 
     DOCKER_OPTS="--host=tcp://0.0.0.0:4243”
 
-I will again stress that this was a need for my specific setup from a single host to an [HP Moonshot][moonshot] system with 45 [cartridges][moonshot_cartridge] on an internal network that ould only be accessed through a VPN with no external access. ONLY use a setup like this if you have a secure setup. Also make sure that access to port you use (for instance, 4243 in the example above) is limited to only the host that needs to access it. In my case, it was the host I was running [Ansible][Ansible] playbooks on.
+I will again stress that this was a need for my specific setup from a single host to an [HP Moonshot][moonshot] system with 45 [cartridges][moonshot_cartridge] on an internal network that could only be accessed through a VPN with no external access. ONLY use a setup like this if you have a secure setup. Also make sure that access to port you use (for instance, 4243 in the example above) is limited to only the host that needs to access it. In my case, it was the host I was running [Ansible][Ansible] playbooks on.
 
 
 ## Sign up for an account
