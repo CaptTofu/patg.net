@@ -10,7 +10,7 @@ And now we return to our previously-scheduled blog series "[Docker: Containers f
 - [Introduction][docker_intro_blog] -- this episode introduced the reader to the storyline and characters: what are containers, how they work containers vs. virtual machines, what is [Docker][Docker].
 - [Installation][docker_install_blog] -- this episode featured information about installing [Docker][Docker]
 
-In today's episode, the real excitement begins with actually using [Docker][Docker]. The reader will be shown how to perform tasks with Docker, how to build images by hand, and using a Dockerfile. Also starring in this episode are images that a user can build that have services running as well as ```ENTRYPOINT``` and ```CMD``` instructions.
+In today's episode, the real excitement begins with actually using [Docker][Docker]. The reader will be shown how to perform tasks with Docker, how to build images by hand, and using a Dockerfile to build [Docker][Docker] images. Also starring in this episode are images that a user can build that have services running as well as ```ENTRYPOINT``` and ```CMD``` instructions.
 
 ## The [Docker CLI][docker_cli]
 
