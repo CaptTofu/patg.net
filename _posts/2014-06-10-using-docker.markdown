@@ -592,4 +592,4 @@ The next post will feature using Ansible to manage Docker: build images and run 
 [ansible_fest]: https://twitter.com/ansible/status/444493856147390464
 [docker_cli]: http://docs.docker.com/reference/commandline/cli/
 [docker_image_registry]: https://registry.hub.docker.com/
-[docker_intro_blog]: http://172.16.116.210:4000/containers,virtualization,docker/2014/06/05/docker-intro/
+[docker_intro_blog]: http://patg.net/containers,virtualization,docker/2014/06/05/docker-intro/
