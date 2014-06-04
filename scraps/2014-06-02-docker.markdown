@@ -619,6 +619,7 @@ Here is a list of some interesting informational sites and projects that relate 
 [dockerfile]: http://docs.docker.io/reference/builder/
 [docker_ansible]: http://docs.ansible.com/docker_module.html
 [docker_image_ansible]: http://docs.ansible.com/docker_image_module.html
+[docker_image_registry]: https://registry.hub.docker.com/
 [docker_inventory_ansible]: https://github.com/ansible/ansible/blob/devel/plugins/inventory/docker.yml
 [salt_states_dockerio]: http://docs.saltstack.com/en/latest/ref/states/all/salt.states.dockerio.html
 [garety-docker]: https://forge.puppetlabs.com/garethr/docker

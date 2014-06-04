@@ -28,7 +28,7 @@ The basic idea of a container is to contain a process or set of processes such t
 [Docker][Docker] consists of:
   (1) a daemon with a RESTful API 
   (2) [Docker][Docker] command line interface. This CLI also includes the ability to search and "pull" images from both
-  (3) public and private [Docker][Docker] image repositories.
+  (3) public and private [Docker][Docker] image registries.
 
 
 
@@ -64,7 +64,7 @@ When I first started investigating [Docker][Docker], I would provision numerous 
 
 [Docker][Docker] is very simple to install, configure, and use. Their [installation page][docker_installation] covers installing [Docker][Docker] on any number of Linux variants as well as other OSs using virtual machines.
 
-Once Docker is up and running, pulling images from the public [Docker][Docker] image repository is a snap.  You can then quickly deploy containers, make changes and create your own images, and, another swath of icing on the cake, push up your images to share with others on the public [Docker][Docker] image repository.
+Once Docker is up and running, pulling images from the public [Docker][Docker] image repository is a snap.  You can then quickly deploy containers, make changes and create your own images, and, another swath of icing on the cake, push up your images to share with others on the public [Docker][Docker] [image registry][docker_image_registry].
 
 The [Docker][Docker] command-line tool is simple to use, intuitive and offers plenty of help for the numerous sub-commands.
 
@@ -136,3 +136,4 @@ As I mentioned before, there is a lot about [Docker][Docker] that is worth discu
 [openstack_docker]: https://wiki.openstack.org/wiki/Docker
 [openshift]: https://www.openshift.com/?sc_cid=70160000000UJArAAO&gclid=COfd-Oz-5b4CFcHm7AodS1gA7Q
 [freebsd_jail]: http://www.freebsd.org/doc/handbook/jails.html 
+[docker_image_registry]: https://registry.hub.docker.com/
