@@ -50,7 +50,7 @@ Note: The above steps are for Ubuntu. Mileage may vary for other Linux variants.
 
 ## Summary
 
-This second blog post in the series of "Docker: containers for the masses - installation" discussed how Docker installationb and configuration, providing information on some other specifics that the author has found in working with Docker particular to configuration issues. These included: how to run the Docker daemon, running Docker bound to a UNIX socket versus a TCP socket as well as the use of sudo for running the [Docker CLI][docker_cli]. 
+This the second blog post in the series on Docker, and discussed Docker installation and configuration. Specifics that the author has found in working with Docker particular to configuration issues were provided, including: how to run the Docker daemon, running Docker bound to a UNIX socket versus a TCP socket, and the use of sudo for running the [Docker CLI][docker_cli]. 
 
 The next post will cover actual usage of [Docker][Docker].
 
