@@ -10,7 +10,7 @@ And now we return to our previously-scheduled blog series "[Docker: Containers f
 - [Introduction][docker_intro_blog] -- this episode introduced the reader to the storyline and characters: what are containers, how they work containers vs. virtual machines, what is [Docker][Docker].
 - [Installation][docker_install_blog] -- this episode featured information about installing [Docker][Docker]
 
-In today's episode, the real excitement begins with actually using [Docker][Docker]. The purpose being, to show the reader how to perform tasks with Docker, how to build images by hand and using a Dockerfile. Also starring in this episode are images that a user can build that have services running as well as ```ENTRYPOINT``` and ```CMD``` instructions.
+In today's episode, the real excitement begins with actually using [Docker][Docker]. I will show the reader how to perform tasks with Docker, how to build images by hand, and using a Dockerfile. Also starring in this episode are images that a user can build that have services running as well as ```ENTRYPOINT``` and ```CMD``` instructions.
 
 ## The [Docker CLI][docker_cli]
 
@@ -106,7 +106,7 @@ As shown above in the output, the container currently running is still shown as 
 
 ## Connecting to a container
 
-When a virtual machine is run, common usage one would be accustomed to is the idea of being able to ssh into it. If Docker is run as in the above example, interactively, it's obvious that it is running in a shell that allows one to do work inside of your container. The container can also be can also be connected to it using the following command:
+When a virtual machine is run, one commonly expects to be able to ssh into it. If Docker is run as in the above example, interactively, you see that it is running in a shell that allows you to do work inside of your container. The container can also be can also be connected to it using the following command:
 
     $ docker attach 849e71a53c2c
     root@849e71a53c2c:/#
@@ -296,7 +296,7 @@ For instance, below is a simple [Dockerfile][dockerfile] that can be used to ins
     # Set the entrypoint to entrypoint.sh
     ENTRYPOINT ["/usr/local/sbin/entrypoint.sh"]
 
-As can be seen, there are several instructions in this [Dockerfile][dockerfile] that one would commonly use. The ```RUN``` instruction is used to set up apt repositories and update the system, the ```ADD``` instruction which adds a file to the specific location and name, in this case a script used as an ```ENTRYPOINT``` instruction, which is what the container be executed as. The ```EXPOSE``` instruction is used to inform docker which ports the container will listen on: in this case ports needed for ssh and Galera replication and automatic failover setup.
+As can be seen, there are several instructions in this [Dockerfile][dockerfile] that one would commonly use. The ```RUN``` instruction is used to set up apt repositories and update the system. The ```ADD``` instruction adds a file to the specific location and name, in this case a script used as an ```ENTRYPOINT``` instruction, which is what the container be executed as. The ```EXPOSE``` instruction is used to inform docker which ports the container will listen on: in this case ports needed for ssh and Galera replication and automatic failover setup.
 
 Do take note that since the ```ENTRYPOINT``` instruction is used, this container will be run differently than the previous example above. This will be explained later in this post.
 
@@ -464,7 +464,7 @@ In other words, if you think you are going to iteratively develop and make chang
 
 ## About ports exposure and publishing
 
-In the interest if wrapping up this post but still covering something of importance, is the next bit of information to cover pertains to ports and how they are exposed. In an upcoming post detailing my work with Docker and Ansible, the output from a [demonstration][moonshot] that the author gave during the recent [Ansible Fest 2014][ansible_fest] in New York, is provided showing working with Docker across 45 Moonshot [cartridges][moonshot_cartridge] (in other words, bare-metal servers). To be able to reach Docker containers from external hosts, the [previous post][docker_install_blog] mentioned using the Docker setting "--ip"  to set containers to run bound to 0.0.0.0. The other required piece of this functionality requires having Docker bind a given port of the container to a port on the Docker host. For instance, I want to be able to SSH into on my containers from an external host, from HostA to where containers on HostB. HostB would be running one or more containers and each would have sshd running on port 22. How do I ssh to any one of the containers on HostB and reach the correct container yet know what SSH port to use? The following example shows how this is done.
+The next bit of information to cover pertains to ports and how they are exposed. In an upcoming post detailing my work with Docker and Ansible, the output from a [demonstration][moonshot] that the author gave during the recent [Ansible Fest 2014][ansible_fest] in New York is provided showing working with Docker across 45 Moonshot [cartridges][moonshot_cartridge] (in other words, bare-metal servers). To be able to reach Docker containers from external hosts, the [previous post][docker_install_blog] mentioned using the Docker setting "--ip"  to set containers to run bound to 0.0.0.0. The other required piece of this functionality requires having Docker bind a given port of the container to a port on the Docker host. For instance, I want to be able to SSH into on my containers from an external host, from HostA to where containers on HostB. HostB would be running one or more containers and each would have sshd running on port 22. How do I ssh to any one of the containers on HostB and reach the correct container yet know what SSH port to use? The following example shows how this is done.
 
 First, one can specify publish ports with the ```-p``` flag:
 
