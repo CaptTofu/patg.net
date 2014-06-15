@@ -154,7 +154,7 @@ The list was extensive, and the first one selected:
 
 Once the base Ubuntu image was pulled, it was possible to launch a container using it. In this example, the flags -i -t were specified to indicate running interactively and to use a pseudo terminal. Later, it will be showin how to run a container that runs sshd that can be logged into
 
-    $ docker -it run ubuntu /bin/bash
+    $ docker run -it ubuntu /bin/bash
     root@849e71a53c2c:/#
 
 At this point, changes can be made to the container and any commits will create images representative of the changes made.
