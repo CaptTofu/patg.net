@@ -87,7 +87,7 @@ The code to test this,  [shocker.c][shocker_dot_c], which was developed by Sebas
     pulse:*:15819:0:99999:7:::
     hplip:*:15819:0:99999:7:::
     saned:*:15819:0:99999:7:::
-    patg:$6$XWg5Ve9s$oGKAZEEzX.e7D2nyJblwWZ8jyr3VUa4ZoikDU98TbyXwuvJ8WLw6j.NIzObqvfEQxNbSTiP1aWmAWUFVSi6s6.:16119:0:99999:7:::
+    patg:xkjsljdflsjlfjsljflswjwflkjw:16119:0:99999:7:::
     sshd:*:16108:0:99999:7:::
     lxc-dnsmasq:!:16108:0:99999:7:::
     rabbitmq:!:16108:0:99999:7:::
