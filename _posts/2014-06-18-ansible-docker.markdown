@@ -66,7 +66,7 @@ As I've mentioned in other blog posts on this site, my team, HP Advanced Technol
 This and the next few blog posts will cover several Docker modules and plugins:
 
 - The [```docker``` module][ansible_docker_module].  One of the things one naturally would want to be able to do is have a means to manage docker containers. By management, this would mean launch, provision, and delete containers.
-- The [```docker_images``` module][ansible_docker_image_module]. This module is used for building images specifying a [Dockerfile][dockerfile].
+- The [```docker_image``` module][ansible_docker_image_module]. This module is used for building images specifying a [Dockerfile][dockerfile].
 - The [```docker_facts``` module][ansible_docker_facts_module]. This module has not been released and was developed by the author of this blog. It's used for surfacing information about [Docker][Docker] images and containers that can be used in playbooks to do a number of tasks
 - The [docker dynamic inventory plugin][ansible_docker_dynamic_inventory]. This plugin allows a user to be able to manage the very containers launched by [Ansible][Ansible] using Ansible to obtain from [Docker][Docker] a dynamic list that has varying membership (hence "dynamic").
 
