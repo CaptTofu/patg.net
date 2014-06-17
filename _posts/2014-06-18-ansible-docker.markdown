@@ -70,10 +70,6 @@ This and the next few blog posts will cover several Docker modules and plugins:
 - The [```docker_facts``` module][ansible_docker_facts_module]. This module has not been released and was developed by the author of this blog. It's used for surfacing information about [Docker][Docker] images and containers that can be used in playbooks to do a number of tasks
 - The [docker dynamic inventory plugin][ansible_docker_dynamic_inventory]. This plugin allows a user to be able to manage the very containers launched by [Ansible][Ansible] using Ansible to obtain from [Docker][Docker] a dynamic list that has varying membership (hence "dynamic").
 
-<b>(What is missing here?)</b> e for this task, as well as a plugin for building dynamic inventory based off of running containers which will be covered in a subsequent blog post of this series.
-
-<b>(This deleted section should go in your docker facts post, not needed here)</b>
-
 ## The Ansible ```docker``` module
 
 The first module to be discussed is the very module one would use for launching or deleting container, the Ansible docker module. This module is part of the default [Ansible][Ansible] installation and will only require the [Docker python client library][docker-py] to be installed.
@@ -91,7 +87,7 @@ This is a very simple module to use and essentially a play describes itself, whi
         state: "present"
         publish_all_ports: yes
 
-In the above example, this play would result in running locally (```local_action```) the launching of a container with the name of ```db``` with all ports specified in image (Dockerfile) to be published. Furthermore, the parameter ```docker_url``` specifies which Docker daemon to issue this to, from the local action. This is important to note, because otherwise it would assume localhost. <b>(is this connected to the previous sentance? (fragment) ->)</b>If one is managing Docker containers across multiple servers running the Docker daemon. Under the hood, the Ansible docker module is using the Ansible client python module that talks to the daemon on the current host specified in ```docker_url```.
+In the above example, this play would result in running locally (```local_action```) the launching of a container with the name of ```db``` with all ports specified in image (Dockerfile) to be published. Furthermore, the parameter ```docker_url``` specifies which Docker daemon to issue this to, from the local action. This is important to note, because otherwise it would assume localhost. In real-world situations, one may have the need to manage Docker containers across multiple servers running the Docker daemon and would need to be able to connect to Docker on those hosts. Under the hood, the Ansible docker module is using the Ansible client python module that talks to the daemon on the current host specified in ```docker_url```.
 
 This makes for an interesting topography: managing systems (VM or bare metal) that run Docker and in turn, managing those containers, all with Ansible.
 
