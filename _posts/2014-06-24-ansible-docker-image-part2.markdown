@@ -78,8 +78,8 @@ The tasks that then are used for this role which are broken up into specific ope
     # file: docker-dna_galera.yml
     - hosts: docker-dna_galera
       roles:
-        - common
-        - docker-dna_galera
+          - common
+          - docker-dna_galera
 
 <br />
 
@@ -125,15 +125,18 @@ By using the ```docker-dns_galera``` role, the role's variables are set in the f
 
 The first task ```misc.yml``` installs vim or any other package other than the [Percona][percona] packages:
 
-    ---
-    # file: roles/docker-dna_percona/tasks/misc.yml
+{% raw %}
+```
+---
+# file: roles/docker-dna_percona/tasks/misc.yml
 
-    - name: Install things I like
-      apt: pkg={{ item }}
-           state=present
-      with_items:
-        - vim
-
+- name: Install things I like
+  apt: pkg={{ item }}
+       state=present
+  with_items:
+      - vim
+```
+{% endraw %}
 <br />
 
 ### Set the repo
@@ -165,21 +168,24 @@ The ```repo.yml``` task simply sets up apt to use the [Percona][percona] apt rep
 
 The ```install_galera.yml``` task installs [Percona XtraDB Cluster][percona_xtradb_cluster] as well as copying a startup script into /usr/local/bin. This is somewhat historic as upstart didn't work with older versions of [Docker][Docker]
 
+{% raw %}
+
     ---
 
     - name: Install Percona XtraDB Cluster server
       apt: pkg={{ item }}
            state=present
       with_items:
-        - percona-xtradb-cluster-server-5.6
-        - python-mysqldb
-        - xinetd
-        - telnet
+          - percona-xtradb-cluster-server-5.6
+          - python-mysqldb
+          - xinetd
+          - telnet
 
     - name: Copy the helper script
       copy: src=usr/local/bin/mysql_run.sh
             dest=/usr/local/bin/mysql_run.sh
             mode=0755
+{% endraw %}
 
 <br />
 
@@ -187,6 +193,7 @@ The ```install_galera.yml``` task installs [Percona XtraDB Cluster][percona_xtra
 
 The ```grants.yml``` task sets the grants for the database that are needed to run a successful Galera cluster
 
+{% raw %}
     ---
     # file: roles/docker-dna_percona/tasks/grants.yml
 
@@ -198,6 +205,7 @@ The ```grants.yml``` task sets the grants for the database that are needed to ru
 
     - name: Add clustercheck database user (for clustercheck/xinetd -> haproxy)
       mysql_user: user={{ galera['dbusers']['clustercheck']['username'] }} host="localhost" password={{ galera['dbusers']['clustercheck']['password'] }} priv=*.*:"grant, reload, replication client"
+{% endraw %}
 
 <br />
 
