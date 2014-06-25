@@ -47,7 +47,7 @@ The repo, when cloned, there are  the ```base```, ```rabbitmq```, ```zookeeper``
 
 ### Top-level playbook
 
-The ```dna.yml``` playbook sets some variables and includes ```docker-dns_galera.yml```:
+The ```dna.yml``` playbook sets some variables and includes ```docker-dna_galera.yml```:
 
     ---
     # file: dna.yml
@@ -72,7 +72,7 @@ The tasks that then are used for this role which are broken up into specific ope
 
 ### Specifying using the ```docker-dna_galera``` role
  
-```docker-dna_galera.yml``` in turn uses the roles ```common``` and ```docker-dns_galera```
+```docker-dna_galera.yml``` in turn uses the roles ```common``` and ```docker-dna_galera```
 
     ---
     # file: docker-dna_galera.yml
@@ -85,25 +85,20 @@ The tasks that then are used for this role which are broken up into specific ope
 
 ### Role variables
 
-By using the ```docker-dns_galera``` role, the role's variables are set in the file ```roles/docker-dna_galera/vars/main.yml``` which contains variables used by the the templates  ```roles/docker-dna_galera/templates/etc/mysql/my.cnf.j2``` and ```roles/docker-dna_galera/templates/usr/bin/clustercheck.j2```, as well as some of the role's tasks.
+By using the ```docker-dna_galera``` role, the role's variables can be set in the file ```group_vars/docker-dna_galera``` which contains variables used by the the templates  ```roles/docker-dna_galera/templates/etc/mysql/my.cnf.j2``` and ```roles/docker-dna_galera/templates/usr/bin/clustercheck.j2```, as well as some of the role's tasks. These values should be changed to whatever you need them to be.
 
     ---
-    # file: roles/docker-dna_galera/vars/main.yml
-    # these values are default - change for security!
-    galera:
-        dbusers:
-            xtrabackup:
-                username: xtrabackup
-                password: xtrabackup
-            docker:
-                username: docker
-                password: docker
-                host: 172.17.%
-            clustercheck:
-                username: clustercheck
-                password: clustercheck
+    # variables for the docker-dna_galera group, which in
+    # this case is only localhost
 
-<br />
+    clustercheck_username: clustercheck
+    clustercheck_password: xyz123
+    xtrabackup_username: xtrabackup
+    xtrabackup_password: abc987
+    docker_host: localhost
+    docker_username: docker
+    docker_password: c-kr1t
+
 
 ### Top-level playbook including tasks
 
@@ -198,13 +193,13 @@ The ```grants.yml``` task sets the grants for the database that are needed to ru
     # file: roles/docker-dna_percona/tasks/grants.yml
 
     - name: Add Docker database user
-      mysql_user: user={{ galera['dbusers']['docker']['username'] }} host={{ galera['dbusers']['docker']['host'] }}  password={{ galera['dbusers']['docker']['password'] }} priv=*.*:"all privileges"
+      mysql_user: user={{ docker_username }} host={{ docker_host }}  password={{ docker_password }} priv=*.*:"all privileges"
 
     - name: Add xtrabackup database user (for Galera SST)
-      mysql_user: user={{ galera['dbusers']['xtrabackup']['username'] }} host="localhost" password={{ galera['dbusers']['xtrabackup']['password'] }} priv=*.*:"grant, reload, replication client"
+      mysql_user: user={{ xtrabackup_username }} host="localhost" password={{ xtrabackup_password }} priv=*.*:"grant, reload, replication client"
 
     - name: Add clustercheck database user (for clustercheck/xinetd -> haproxy)
-      mysql_user: user={{ galera['dbusers']['clustercheck']['username'] }} host="localhost" password={{ galera['dbusers']['clustercheck']['password'] }} priv=*.*:"grant, reload, replication client"
+      mysql_user: user={{ clustercheck_username }} host="localhost" password={{ clustercheck_password }} priv=*.*:"grant, reload, replication client"
 {% endraw %}
 
 <br />
@@ -247,7 +242,7 @@ The templates for the ```docker-dna_percona``` role are the ```my.cnf.j2``` jinj
     wsrep_provider          = /usr/lib/libgalera_smm.so
     wsrep_slave_threads     = 4
     wsrep_sst_method        = xtrabackup
-    wsrep_sst_auth          = {{ galera['dbusers']['xtrabackup']['username'] }}:{{ galera['dbusers']['xtrabackup']['password'] }}
+    wsrep_sst_auth          = {{ xtrabackup_username }}:{{ xtrabackup_password }}
     wsrep_cluster_name      = percona-cluster
     wsrep_cluster_address   = gcomm://
     wsrep_provider_options  = gcache.size=2G;
