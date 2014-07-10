@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Docker: Containers for the masses -- Installation"
+title: "Docker: Containers for the Masses -- Installation"
 date: 2014-06-09 12:00:00
 categories: containers,virtualization,docker
 ---

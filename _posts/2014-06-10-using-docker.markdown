@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Docker: Containers for the masses -- using Docker"
+title: "Docker: Containers for the Masses -- using Docker"
 date: 2014-06-10 12:00:00
 categories: containers,virtualization,docker
 ---
