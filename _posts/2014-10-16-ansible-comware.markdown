@@ -66,7 +66,8 @@ Secondly, a simple task using the "comware_5_2" module:
 - hosts: switch1
   tasks:
   - name: gather facts from switch
-    comware_5_2: gather_facts=true host={{ switch_host }} username={{ switch_user }} password={{ switch_password }}
+    comware_5_2: gather_facts=true host={{ switch_host }} username={{ switch_user }}
+                 password={{ switch_password }}
 ```
 {% endraw %}
 
@@ -74,10 +75,216 @@ If I run this with the ```-vvvv```` option:
 
 {% raw %}
 ```
-ok: [localhost] => {"ansible_facts": {"current_config": {"domain default": "enable system", "ftp server": "enable", "interfaces": {"GigabitEthernet1/0/1": {"stp edged-port": "enable"}, "GigabitEthernet1/0/10": {"stp edged-port": "enable", "vlan": {"tagged": {}, "untagged": {"access": ["44"]}}}, "GigabitEthernet1/0/11": {"port link-type": "trunk", "stp edged-port": "enable", "vlan": {"tagged": {"trunk": ["1", "22"]}, "untagged": {}}}, "GigabitEthernet1/0/12": {"port link-type": "trunk", "stp edged-port": "enable", "vlan": {"tagged": {"trunk": ["1", "22"]}, "untagged": {}}}, "GigabitEthernet1/0/13": {"port link-type": "hybrid", "stp edged-port": "enable", "vlan": {"tagged": {}, "untagged": {"hybrid": ["1", "22"]}}}, "GigabitEthernet1/0/14": {"port link-type": "hybrid", "stp edged-port": "enable", "vlan": {"tagged": {}, "untagged": {"hybrid": ["1", "22"]}}}, "GigabitEthernet1/0/15": {"port link-type": "hybrid", "stp edged-port": "enable", "vlan": {"tagged": {}, "untagged": {"hybrid": ["1", "55", "66", "77"]}}}, "GigabitEthernet1/0/16": {"stp edged-port": "enable"}, "GigabitEthernet1/0/17": {"stp edged-port": "enable"}, "GigabitEthernet1/0/18": {"stp edged-port": "enable"}, "GigabitEthernet1/0/19": {"stp edged-port": "enable"}, "GigabitEthernet1/0/2": {"stp edged-port": "enable"}, "GigabitEthernet1/0/20": {"stp edged-port": "enable"}, "GigabitEthernet1/0/21": {"stp edged-port": "enable"}, "GigabitEthernet1/0/22": {"stp edged-port": "enable"}, "GigabitEthernet1/0/23": {"stp edged-port": "enable"}, "GigabitEthernet1/0/24": {"stp edged-port": "enable"}, "GigabitEthernet1/0/25": {"stp edged-port": "enable"}, "GigabitEthernet1/0/26": {"port link-type": "trunk", "stp edged-port": "enable", "vlan": {"tagged": {"trunk": ["1", "44"]}, "untagged": {}}}, "GigabitEthernet1/0/27": {"port link-type": "hybrid", "stp edged-port": "enable", "vlan": {"tagged": {}, "untagged": {"hybrid": ["1"]}}}, "GigabitEthernet1/0/28": {"stp edged-port": "enable", "vlan": {"tagged": {}, "untagged": {"access": ["44"]}}}, "GigabitEthernet1/0/3": {"stp edged-port": "enable"}, "GigabitEthernet1/0/4": {"stp edged-port": "enable"}, "GigabitEthernet1/0/5": {"stp edged-port": "enable"}, "GigabitEthernet1/0/6": {"stp edged-port": "enable"}, "GigabitEthernet1/0/7": {"stp edged-port": "enable"}, "GigabitEth
-ernet1/0/8": {"stp edged-port": "enable"}, "GigabitEthernet1/0/9": {"stp edged-port": "enable", "vlan": {"tagged": {}, "untagged": {"access": ["44"]}}}, "NULL0": {}, "Vlan-interface1": {}}, "ip ttl-expires": "enable", "local-user": {"admin": {"authorization-attribute": "level 2", "password": "cipher $c$3$ieXiyTSM+tfFD+y5eUiQVq2EamKJl27j7R0=", "service-type": ["ssh", "telnet", "terminal", "web"]}, "admin2": {"authorization-attribute": "level 2", "password": "cipher $c$3$ieXiyTSM+tfFD+y5eUiQVq2EamKJl27j7R0=", "service-type": ["ssh", "telnet", "terminal", "web"]}, "admin3": {"authorization-attribute": "level 2", "password": "cipher $c$3$ieXiyTSM+tfFD+y5eUiQVq2EamKJl27j7R0=", "service-type": ["ssh", "telnet", "terminal", "web"]}, "jimbob": {"authorization-attribute": "level 2", "password": "cipher $c$3$ieXiyTSM+tfFD+y5eUiQVq2EamKJl27j7R0=", "service-type": ["ssh", "terminal", "web"]}}, "password-recovery": "enable", "sysname": "HP", "user-group": "system", "vlans": {"1": {}, "22": {"name": "VLAN_22"}, "44": {"name": "VLAN_44"}, "55": {}, "66": {}, "77": {}}}, "summary": {"Current_boot_app_is": "flash:/V1910-CMW520-R1513P62.BIN", "Default_gateway": "192.168.1.1", "IP_Method": "DHCP", "IP_address": "192.168.1.14", "Next_backup_boot_app_is": "NULL", "Next_main_boot_app_is": "flash:/v1910-cmw520-r1513p62.bin", "Select_menu_option": "Summary", "Subnet_mask": "255.255.255.0", "bootrom_version": "Bootrom Version is 163", "cpld_version": "CPLD Version is 002", "hardware_version": "Hardware Version is REV.B", "memory_dram": "128M    bytes DRAM", "memory_flash": "128M    bytes Nand Flash Memory", "memory_register": "Config Register points to Nand Flash", "model": "", "software_copyright": "Copyright (c) 2010-2013 Hewlett-Packard Development Company, L.P.", "software_version": "Comware Software, Version 5.20, Release 1513P62", "subslot_0": "[SubSlot 0] 24GE+4SFP Hardware Version is REV.B", "uptime": "HP V1910-24G Switch uptime is 2 weeks, 0 day, 22 hours, 2 minutes"}, "vlans": {"1": {"Description": "VLAN 0001", "IP_Address": "192.168.1.14", "Name": "VLAN 0001", "Route_Interface": "configured", "Subnet_Mask": "255.255.255.0", "Tagged_Ports": "none", "Untagged_Ports": ["GigabitEthernet1/0/1", "GigabitEthernet1/0/2", "GigabitEthernet1/0/3", "GigabitEthernet1/0/4", "GigabitEthernet1/0/5", "GigabitEthernet1/0/6", "GigabitEthernet1/0/7", "GigabitEthernet1/0/8", "GigabitEthernet1/0/11", "GigabitEthernet1/0/12", "GigabitEthernet1/0/13", "GigabitEthernet1/0/14", "GigabitEthernet1/0/15", "GigabitEthernet1/0/16", "GigabitEthernet1/0/17", "GigabitEthernet1/0/18", "GigabitEthernet1/0/19", "GigabitEthernet1/0/20", "GigabitEthernet1/0/21", "GigabitEthernet1/0/22", "GigabitEthernet1
-/0/23", "GigabitEthernet1/0/24", "GigabitEthernet1/0/25", "GigabitEthernet1/0/26", "GigabitEthernet1/0/27"], "VLAN_Type": "static"}, "22": {"Description": "VLAN 0022", "Name": "VLAN_22", "Route_Interface": "not configured", "Tagged_Ports": ["GigabitEthernet1/0/11", "GigabitEthernet1/0/12"], "Untagged_Ports": ["GigabitEthernet1/0/13", "GigabitEthernet1/0/14"], "VLAN_ID": "22", "VLAN_Type": "static"}, "44": {"Description": "VLAN 0044", "Name": "VLAN_44", "Route_Interface": "not configured", "Tagged_Ports": ["GigabitEthernet1/0/26", "GigabitEthernet1/0/27"], "Untagged_Ports": ["GigabitEthernet1/0/9", "GigabitEthernet1/0/10", "GigabitEthernet1/0/28"], "VLAN_ID": "44", "VLAN_Type": "static"}, "55": {"Description": "VLAN 0055", "Name": "vlan 55", "Route_Interface": "not configured", "Tagged_Ports": "none", "Untagged_Ports": ["GigabitEthernet1/0/15"], "VLAN_ID": "55", "VLAN_Type": "static"}, "66": {"Description": "VLAN 0066", "Name": "vlan 66", "Route_Interface": "not configured", "Tagged_Ports": "none", "Untagged_Ports": ["GigabitEthernet1/0/15"], "VLAN_ID": "66", "VLAN_Type": "static"}, "77": {"Description": "VLAN 0077", "Name": "vlan 77", "Route_Interface": "not configured", "Tagged_Ports": "none", "Untagged_Ports": ["GigabitEthernet1/0/15"], "VLAN_ID": "77", "VLAN_Type": "static"}}}, "changed": false, "failed": false, "msg": ""}
-ok: [localhost] => {"ansible_facts": {"current_config": {"domain default": "enable system", "ftp server": "enable", "interfaces": {"GigabitEthernet1/0/1": {"stp edged-port": "enable"}, "GigabitEthernet1/0/10": {"stp edged-port": "enable", "vlan": {"tagged": {}, "untagged": {"access": ["44"]}}}, "GigabitEthernet1/0/11": {"port link-type": "trunk", "stp edged-port": "enable", "vlan": {"tagged": {"trunk": ["1", "22"]}, "untagged": {}}}, "GigabitEthernet1/0/12": {"port link-type": "trunk", "stp edged-port": "enable", "vlan": {"tagged": {"trunk": ["1", "22"]}, "untagged": {}}}, "GigabitEthernet1/0/13": {"port link-type": "hybrid", "stp edged-port": "enable", "vlan": {"tagged": {}, "untagged": {"hybrid": ["1", "22"]}}}, "GigabitEthernet1/0/14": {"port link-type": "hybrid", "stp edged-port": "enable", "vlan": {"tagged": {}, "untagged": {"hybrid": ["1", "22"]}}}, "GigabitEthernet1/0/15": {"port link-type": "hybrid", "stp edged-port": "enable", "vlan": {"tagged": {}, "untagged": {"hybrid": ["1", "55", "66", "77"]}}}, "GigabitEthernet1/0/16": {"stp edged-port": "enable"}, "GigabitEthernet1/0/17": {"stp edged-port": "enable"}, "GigabitEthernet1/0/18": {"stp edged-port": "enable"}, "GigabitEthernet1/0/19": {"stp edged-port": "enable"}, "GigabitEthernet1/0/2": {"stp edged-port": "enable"}, "GigabitEthernet1/0/20": {"stp edged-port": "enable"}, "GigabitEthernet1/0/21": {"stp edged-port": "enable"}, "GigabitEthernet1/0/22": {"stp edged-port": "enable"}, "GigabitEthernet1/0/23": {"stp edged-port": "enable"}, "GigabitEthernet1/0/24": {"stp edged-port": "enable"}, "GigabitEthernet1/0/25": {"stp edged-port": "enable"}, "GigabitEthernet1/0/26": {"port link-type": "trunk", "stp edged-port": "enable", "vlan": {"tagged": {"trunk": ["1", "44"]}, "untagged": {}}}, "GigabitEthernet1/0/27": {"port link-type": "hybrid", "stp edged-port": "enable", "vlan": {"tagged": {}, "untagged": {"hybrid": ["1"]}}}, "GigabitEthernet1/0/28": {"stp edged-port": "enable", "vlan": {"tagged": {}, "untagged": {"access": ["44"]}}}, "GigabitEthernet1/0/3": {"stp edged-port": "enable"}, "GigabitEthernet1/0/4": {"stp edged-port": "enable"}, "GigabitEthernet1/0/5": {"stp edged-port": "enable"}, "GigabitEthernet1/0/6": {"stp edged-port": "enable"}, "GigabitEthernet1/0/7": {"stp edged-port": "enable"}, "GigabitEth
+ok: [localhost] => {"ansible_facts": {
+    "current_config":
+        {"domain default": "enable system", "ftp server": "enable", 
+         "interfaces": {"GigabitEthernet1/0/1": {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/10":
+                           {"stp edged-port": "enable", 
+                            "vlan": 
+                                {"tagged": {}, 
+                                 "untagged": {"access": ["44"]}}}, 
+                        "GigabitEthernet1/0/11": 
+                          {"port link-type": "trunk", 
+                           "stp edged-port": "enable", 
+                           "vlan": {"tagged": {"trunk": ["1", "22"]}, "untagged": {}}},
+                        "GigabitEthernet1/0/12":
+                          {"port link-type": "trunk",
+                           "stp edged-port": "enable",
+                           "vlan": {"tagged": {"trunk": ["1", "22"]}, "untagged": {}}},
+                        "GigabitEthernet1/0/13":
+                          {"port link-type": "hybrid",
+                           "stp edged-port": "enable", 
+                           "vlan": {"tagged": {}, "untagged": {"hybrid": ["1", "22"]}}},
+                        "GigabitEthernet1/0/14": 
+                          {"port link-type": "hybrid",
+                           "stp edged-port": "enable", 
+                           "vlan": {"tagged": {}, "untagged": {"hybrid": ["1", "22"]}}},
+                        "GigabitEthernet1/0/15":
+                          {"port link-type": "hybrid",
+                           "stp edged-port": "enable",
+                           "vlan": 
+                            {"tagged": {}, 
+                             "untagged": {"hybrid": ["1", "55", "66", "77"]}}},
+                        "GigabitEthernet1/0/16":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/17":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/18":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/19":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/2":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/20":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/21":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/22":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/23":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/24":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/25":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/26":
+                          {"port link-type": "trunk",
+                           "stp edged-port": "enable",
+                           "vlan":
+                             {"tagged": {"trunk": ["1", "44"]}, "untagged": {}}},
+                        "GigabitEthernet1/0/27":
+                          {"port link-type": "hybrid",
+                           "stp edged-port": "enable",
+                           "vlan":
+                             {"tagged": {}, "untagged": {"hybrid": ["1"]}}},
+                        "GigabitEthernet1/0/28":
+                          {"stp edged-port": "enable", 
+                           "vlan": {"tagged": {}, "untagged": {"access": ["44"]}}},
+                        "GigabitEthernet1/0/3":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/4":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/5":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/6":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/7":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/8":
+                          {"stp edged-port": "enable"},
+                        "GigabitEthernet1/0/9":
+                          {"stp edged-port": "enable", 
+                           "vlan":
+                             {"tagged": {}, "untagged": {"access": ["44"]}}}, "NULL0": {},
+                        "Vlan-interface1": {}},
+         "ip ttl-expires": "enable", 
+         "local-user": 
+           { "admin": 
+               {"authorization-attribute": "level 2", 
+                "password": "cipher $c$3$ieXiyTSM+tfFD+y5eUiQVq2EamKJl27j7R0=", 
+                "service-type": ["ssh", "telnet", "terminal", "web"]},
+             "admin2":
+               {"authorization-attribute": "level 2",
+                "password": "cipher $c$3$ieXiyTSM+tfFD+y5eUiQVq2EamKJl27j7R0=",
+                "service-type": ["ssh", "telnet", "terminal", "web"]},
+             "admin3":
+               {"authorization-attribute": "level 2",
+                "password": "cipher $c$3$ieXiyTSM+tfFD+y5eUiQVq2EamKJl27j7R0=",
+                "service-type": ["ssh", "telnet", "terminal", "web"]}},
+         "password-recovery": "enable",
+         "sysname": "HP",
+         "user-group": "system", 
+         "vlans": 
+           {"1": {}, "22": {"name": "VLAN_22"},
+            "44": {"name": "VLAN_44"},
+            "55": {},
+            "66": {},
+            "77": {}}},
+  "summary": {
+    "Current_boot_app_is": "flash:/V1910-CMW520-R1513P62.BIN",
+    "Default_gateway": "192.168.1.1",
+    "IP_Method": "DHCP",
+    "IP_address": "192.168.1.14",
+    "Next_backup_boot_app_is": "NULL",
+    "Next_main_boot_app_is": "flash:/v1910-cmw520-r1513p62.bin",
+    "Select_menu_option": "Summary",
+    "Subnet_mask": "255.255.255.0",
+    "bootrom_version": "Bootrom Version is 163", 
+    "cpld_version": "CPLD Version is 002", 
+    "hardware_version": "Hardware Version is REV.B", 
+    "memory_dram": "128M    bytes DRAM", 
+    "memory_flash": "128M    bytes Nand Flash Memory",
+    "memory_register": "Config Register points to Nand Flash",
+    "model": "",
+    "software_copyright": "Copyright (c) 2010-2013 Hewlett-Packard Development Company, L.P.", 
+    "software_version": "Comware Software, Version 5.20, Release 1513P62",
+    "subslot_0": "[SubSlot 0] 24GE+4SFP Hardware Version is REV.B",
+    "uptime": "HP V1910-24G Switch uptime is 2 weeks, 0 day, 22 hours, 2 minutes"},
+  "vlans":
+    {"1": 
+      {"Description": "VLAN 0001",
+       "IP_Address": "192.168.1.14",
+       "Name": "VLAN 0001", 
+       "Route_Interface": "configured",
+       "Subnet_Mask": "255.255.255.0", 
+       "Tagged_Ports": "none", 
+       "Untagged_Ports": 
+         [ "GigabitEthernet1/0/1",
+           "GigabitEthernet1/0/2", 
+           "GigabitEthernet1/0/3",
+           "GigabitEthernet1/0/4",
+           "GigabitEthernet1/0/5",
+           "GigabitEthernet1/0/6",
+           "GigabitEthernet1/0/7",
+           "GigabitEthernet1/0/8",
+           "GigabitEthernet1/0/11",
+           "GigabitEthernet1/0/12",
+           "GigabitEthernet1/0/13",
+           "GigabitEthernet1/0/14",
+           "GigabitEthernet1/0/15",
+           "GigabitEthernet1/0/16",
+           "GigabitEthernet1/0/17",
+           "GigabitEthernet1/0/18",
+           "GigabitEthernet1/0/19",
+           "GigabitEthernet1/0/20",
+           "GigabitEthernet1/0/21",
+           "GigabitEthernet1/0/22",
+           "GigabitEthernet1/0/23",
+           "GigabitEthernet1/0/24",
+           "GigabitEthernet1/0/25",
+           "GigabitEthernet1/0/26",
+           "GigabitEthernet1/0/27"],
+           "VLAN_Type": "static"},
+       "22":
+         {"Description": "VLAN 0022",
+          "Name": "VLAN_22",
+          "Route_Interface": "not configured",
+          "Tagged_Ports":
+            ["GigabitEthernet1/0/11", "GigabitEthernet1/0/12"],
+          "Untagged_Ports":
+            ["GigabitEthernet1/0/13", "GigabitEthernet1/0/14"],
+          "VLAN_ID": "22",
+          "VLAN_Type": "static"},
+        "44":
+          {"Description": "VLAN 0044",
+           "Name": "VLAN_44",
+           "Route_Interface": "not configured",
+           "Tagged_Ports":
+             ["GigabitEthernet1/0/26", "GigabitEthernet1/0/27"],
+           "Untagged_Ports":
+             ["GigabitEthernet1/0/9", "GigabitEthernet1/0/10", "GigabitEthernet1/0/28"],
+           "VLAN_ID": "44",
+           "VLAN_Type": "static"},
+         "55":
+           {"Description": "VLAN 0055",
+            "Name": "vlan 55",
+            "Route_Interface": "not configured",
+            "Tagged_Ports": "none",
+            "Untagged_Ports": ["GigabitEthernet1/0/15"],
+            "VLAN_ID": "55",
+            "VLAN_Type": "static"},
+          "66":
+            {"Description": "VLAN 0066",
+             "Name": "vlan 66",
+             "Route_Interface": "not configured",
+             "Tagged_Ports": "none",
+             "Untagged_Ports": ["GigabitEthernet1/0/15"],
+             "VLAN_ID": "66",
+             "VLAN_Type": "static"},
+          "77":
+            {"Description": "VLAN 0077",
+             "Name": "vlan 77",
+             "Route_Interface": "not configured",
+             "Tagged_Ports": "none",
+             "Untagged_Ports": ["GigabitEthernet1/0/15"],
+             "VLAN_ID": "77",
+             "VLAN_Type": "static"}
+           }
+        },
+"changed": false, "failed": false, "msg": ""}
+
+ok: [localhost] => {"ansible_facts": < SNIP - the same as above ! />
 
 PLAY RECAP ********************************************************************
 localhost                  : ok=2    changed=0    unreachable=0    failed=0
