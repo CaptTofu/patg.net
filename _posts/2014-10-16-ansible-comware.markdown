@@ -5,25 +5,23 @@ date: 2014-10-16 12:00:00
 categories: ansible,comware,switches
 ---
 
-It has been simply too much time in between blog postings. The reason for this, or excuse, if I can offer it, is that I have been so busy trying to learn both about [Comware][comware]-based switches as well as how to create an [Ansible][Ansible] module that can manage such a switch.
-
-The switch in question is an HP V1910 24G. I hadn't used this switch before and had to do a bit of research as to how it works, as well as refreshing some networking basics particular to switches.
+Since I last posted, I have been busy trying to learn both about [Comware][comware]-based switches as well as how to create an [Ansible][Ansible] module that can manage such a switch - the HP V1910 24G in particular.  I hadn't used this switch before and had to do a bit of research as to how it works, as well as refreshing some networking basics particular to switches.
 
 ## About the HP V1910 24G Switch
 
-This switch is are advanced, smart managed fixed-configuration Gigabit switch. Its target customer would be a small business. It's a 24-port switch that can be managed using a web UI or command line interface. It is [Comware][comware] 5.2-based and for me to have all the features I needed with [Comware][comware], I had to run a special command to have the switch go into what is called "developer mode"-- something that the Ansible modules I wrote do automatically for the user.
+This switch is an advanced, smart managed fixed-configuration Gigabit switch. Its target customer would be a small business. It's a 24-port switch that can be managed using a web UI or command line interface. It is [Comware][comware] 5.2-based and for me to have all the features I needed with [Comware][comware], I had to run a special command to have the switch go into what is called "developer mode"-- something that the Ansible modules I wrote do automatically for the user.
 
 I was hoping originally that there would be a REST API but was unable to find one, so in order to write an [Ansible][Ansible] module, I had to interact with the switch using SSH, specifically through the [Paramiko][paramiko] library.
 
-At first, one would think "ah, ssh, just run ansible against it". The problem with that is that the thing being managed is not POSIX-based (a UNIX host) and Ansible, when basically connecting, will try to create a temporary directory and run several posix commands that would fail on the switch.
+At first, one would think "ah, SSH, just run Ansible against it". However, Ansible by default assumes a POSIX-based system (UNIX host) and will try to create a temporary directory and run several posix commands.  Since the switch is not POSIX-based, this fails. 
 
 ## About the implementation
 
-First of all, it should be noted that a lot of this is proof-of-concept and trying to discover how feasible this is. My honest opinion is that it is feasible, once you understand how to interact with ther switch and work with [Paramiko][paramiko] and output from the switch.
+First of all, it should be noted that a lot of work was proof-of-concept and trying to discover how feasible this would be. My honest opinion is that it is feasible, once you understand how to interact with ther switch and work with [Paramiko][paramiko] and output from the switch.
 
-What I ended up writing was an [Ansible][Ansible] module that sends the appropriate [Comware][comware] commands to do specific tasks. This was difficult in that I had to deal with responses from the switch that don't behave the way a UNIX host would. For instance, in some actions on the switch, it will reply to a command you run with a yes or not prompt, the answers not being sent with a carriage return, hence I ended up using [Paramiko][paramiko_api] methods channel ```recv()``` and ```send()``` as opposed to ```exec_command()``` (I will digress on the specifics of this in another post). Also difficult but surmountable was how to read the output fromt eh switch and know that I had read everything I needed to. At first, I would run some commands and my program would wait forever -- because it was still trying to ```recv()``` !
+What I ended up writing was an [Ansible][Ansible] module that sends the appropriate [Comware][comware] commands to do specific tasks. This was difficult in that I had to deal with responses from the switch that don't behave the way a UNIX host would. For instance, in some actions on the switch, it will reply to a command  with a yes or not prompt and expect the answers to not be sent with a carriage return, hence I ended up using [Paramiko][paramiko_api] methods channel ```recv()``` and ```send()``` as opposed to ```exec_command()``` (I will digress on the specifics of this in another post). Also difficult but surmountable was how to read the output fromt eh switch and know that I had read everything I needed to. At first, I would run some commands and my program would wait forever -- because it was still trying to ```recv()``` !
 
-I was inspired by some great snippets in the [paramiko_expect][paramiko_expect] library. I would have used this library, but wanted to keep my library requirements at a minimum, plus, I only needed a subset of features.
+I was inspired by some great snippets in the [paramiko_expect][paramiko_expect] library. I would have used this library, but wanted to keep my library requirements at a minimum; plus I only needed a subset of features.
 
 Also changed is the [Ansible][Ansible] module arrangement. The Ansible progect has split out modules into [core][ansible_modules_core] and [extras][ansible_modules_extras] git repositories, as well as renaming them with ".py" extensions (a good thing!). This added one requirement for me that my modules which have common methods needed a library. Originally, one would put module libraries in [module-utils][module-utils] directory, but with this change, it made more sense for me to create my own python library, [comware_5_2][comware_5_2], a PyPI module that I would eventually like to make less specific to Ansible and more specific to writing Python code to talk to [Comware][comware]-based switches.
 
@@ -34,7 +32,7 @@ It's very easy to use. You of course need a switch, and currently my code is in 
 There are 4 [Ansible][Ansible] comware_5_2 modules:
 
 - comware_5_2: This module simply gathers facts and allows you to reboot the switch if you like. It has a state of "present" and "reboot", the default being "present". A reboot is a bit tricky in that once you issue it, you have to wait for the switch to resume operation.
-- comware_5_2_vlan: This module allows for the creation, modification, and deletion of vlans. You set the name of the vlan, which ports you want tagged as well as untagged and what link-type to use for each category of port 
+- comware_5_2_vlan: This module allows for the creation, modification, and deletion of vlans. You set the name of the vlan, which ports you want tagged as well as untagged and what link-type to use for each category of port. 
 - comware_5_2_port: This module allows you to modify ports, meaning, assign them to vlans and set other characteristics such as link-type. There is so much to be done with ports, so again, this is a proof of concept and more attribute settings can easily be added to.
 - comware_5_2_user: This module allows you to create, modify, and delete users. For instance, you can set a new user with a given password and privilege level as well as set which access methods they can use-- "web", "ssh", "terminal" or "telnet".
 
