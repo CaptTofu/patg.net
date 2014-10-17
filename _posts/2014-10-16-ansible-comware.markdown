@@ -304,7 +304,11 @@ To use a key, I could have simply used the ```private_key_file``` option in the 
 
 {% raw %}
 ```
-    comware_5_2: gather_facts=true host={{ switch_host }} username={{ switch_user }} private_key_file=~/.ssh/id_dsa
+    comware_5_2:
+      gather_facts=true
+      host={{ switch_host }}
+      username={{ switch_user }}
+      private_key_file=~/.ssh/id_dsa
 ```
 {% endraw %}
 
