@@ -24,7 +24,7 @@ The strategies and architectures that influence CoreOS allow companies like Goog
 
 As mentioned on [CoreOS's website][coreos], its development and architecture is intended to allow companies like Google, Facebook, and Twitter to run their services at scale and with high resilience. 
 
-CoreOS inclused the necessary components to run Docker clustered across machines. The components are:
+CoreOS includes the necessary components to run Docker clustered across machines. The components are:
 
 * [systemd][systemd] - standard with newer viersions of Linux. This is a system of daemons, libraries, and utilities that replace upstart and init scripts. Systemd uses the concept of unit files that define what process to run, how to run it, and ensures that there are no conflicts with the process. The version of Debian we built our POC on included systemd by default.
 
@@ -35,7 +35,7 @@ CoreOS inclused the necessary components to run Docker clustered across machines
 
 ## Implementation
 
-Using HP Cloud, we built a VM image with the aforementioned components, using ansible on a stock Debian setup. Using that image, we launched a given number, in our case, 5 VMs to demonstrate the usefulness of fleet with a sample [ELKstack][elkstack] application. The ELKStack sample app was a modified version of Marcel DeGraaf's excellent [blog post][marcel_blog] and code to demonstrate our proof of concept worked in a practical way, showing how fleet intelligently scheduled docker containers across machines in the cluster. 
+Using HP Cloud, we built a VM image with the aforementioned components, using Ansible on a stock Debian setup. Using that image, we launched a given number (in our case 5) VMs to demonstrate the usefulness of fleet with a sample [ELKstack][elkstack] application. The ELKStack sample app was a modified version of Marcel DeGraaf's excellent [blog post][marcel_blog] and code to demonstrate our proof of concept worked in a practical way, showing how fleet intelligently scheduled docker containers across machines in the cluster. 
 
 ## The Sample Application
 
@@ -90,7 +90,7 @@ The one thing this sample app for our POC made clear to me: the very thing that 
 
 ## Summary
 
-There is so much about the proof-of-concept that we worked on that I want to write about and will have subsequent posts about a number of things such as other Docker clustering and scheduling projects, the ansible work that was done, the work we did to make this work on HP Cloud considering private and public IPV4 addresses, as well as more details on how to use ```confd``` which is a tool that I really had fun aquainting myself with.
+There is so much about the proof-of-concept that we worked on that I want to write about and will have subsequent posts about a number of things such as other Docker clustering and scheduling projects, the Ansible work that was done, the work we did to make this work on HP Cloud considering private and public IPV4 addresses, as well as more details on how to use ```confd``` which is a tool that I really had fun aquainting myself with.
 
 Stay tuned!
 
