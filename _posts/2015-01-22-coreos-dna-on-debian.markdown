@@ -24,7 +24,7 @@ The strategies and architectures that influence CoreOS allow companies like Goog
 
 As mentioned on [CoreOS's website][coreos], its development and architecture is intended to allow companies like Google, Facebook, and Twitter to run their services at scale and with high resilience. 
 
-CoreOS inclused the necessary components to run Docker clustered across machines. The components are:
+CoreOS includes the necessary components to run Docker clustered across machines. The components are:
 
 * [systemd][systemd] - standard with newer viersions of Linux. This is a system of daemons, libraries, and utilities that replace upstart and init scripts. Systemd uses the concept of unit files that define what process to run, how to run it, and ensures that there are no conflicts with the process. The version of Debian we built our POC on included systemd by default.
 
