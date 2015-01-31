@@ -14,7 +14,7 @@ The goal was to create a proof of concept (POC) to meld the best parts and be us
 
 ## Why Debian?
 
-HP [Helion][helion] runs on Debian and uses HLinux and we wanted to see how feasible this was as well as introduce this interesting combination of components to others.
+HP [Helion][helion] runs on Debian and we wanted to see how feasible this was as well as introduce this interesting combination of components to others.
 
 ## What is CoreOS?
 
@@ -35,7 +35,9 @@ CoreOS inclused the necessary components to run Docker clustered across machines
 
 ## Implementation
 
-Using HP Cloud, we built a VM image with the aforementioned components, using ansible on a stock Debian setup. Using that image, we launched a given number, in our case, 5 VMs to demonstrate the usefulness of fleet with a sample [ELKstack][elkstack] application. The ELKStack sample app was a modified version of Marcel DeGraaf's excellent [blog post][marcel_blog] and code to demonstrate our proof of concept worked in a practical way, showing how fleet intelligently scheduled docker containers across machines in the cluster. 
+Using HP’s Public Cloud, built from OpenStack, we constructed a compute (VM) image utilizing the aforementioned components and orchestrated with Ansible on top of a stock (or default) Debian “Testing” installation.
+
+Using the built image, we launched a given number, in our case, 5 VMs to demonstrate the usefulness of fleet with a sample [ELKstack][elkstack] application. The ELKStack sample app was a modified version of the one given by Marcel DeGraaf in his excellent [blog post][marcel_blog]. In addition to his great article, he also provides [example code][marcel_code]. We used this example, slightly modified, to demonstrate our proof of concept worked in a practical way supporting a useful app as well as showing how fleet intelligently scheduled docker containers across machines in the cluster. 
 
 ## The Sample Application
 
@@ -62,7 +64,7 @@ This is an extremely useful functionality systemd provides that makes applicatio
 ### Launch order
 
 
-For all of these containers except the Kibana/Elasticsearch container, they each need to have the ability once running to know the IP address of the other containers. Logstash needs to know the IP of Kibana/Elasticsearch in order for forward events to, the Sinatra web app containers need to know the IP address of the Logstash container for each logstash-agent to forward events to the Logstash central logging agent, the Nginx container needs to know which Kibana web application containers there are to proxy to. The tesp script container needs to know what the IP is of Nginx.
+For all of these containers except the Kibana/Elasticsearch container, they each need to have the ability once running to know the IP address of the other containers. Logstash needs to know the IP of Kibana/Elasticsearch in order for forward events to, the Sinatra web app containers need to know the IP address of the Logstash container for each logstash-agent to forward events to the Logstash central logging agent, the Nginx container needs to know which Kibana web application containers there are to proxy to. The test script container needs to know what the IP is of Nginx.
 
 This discovery capability is provided by the very thing that makes Fleet able to do its job: etcd
 
@@ -70,9 +72,9 @@ These containers are luanched using the ```fleetctl`` utility (once the service 
 
 For instance, when the Elasticsearch container is launched, it registers its IP address as ```elasticsearch/host``` in etcd. Each of these containers is "baked" with another great utility that is luanched with a simple ```boot.sh``` script: [confd][confd]
 
-### Confd another ingredient of magic
+### [Confd][confd]: another magic ingredient
 
-```confd``` on each container is configured to generated the necessary configuration files using a confd template that interpolates the variable provided from etcd.
+[```confd```][confd] on each container is configured to generated the necessary configuration files using a confd template that interpolates the variable provided from etcd.
 
 This can be explained better this way:
 
@@ -90,7 +92,7 @@ The one thing this sample app for our POC made clear to me: the very thing that 
 
 ## Summary
 
-There is so much about the proof-of-concept that we worked on that I want to write about and will have subsequent posts about a number of things such as other Docker clustering and scheduling projects, the ansible work that was done, the work we did to make this work on HP Cloud considering private and public IPV4 addresses, as well as more details on how to use ```confd``` which is a tool that I really had fun aquainting myself with.
+There is so much about the proof-of-concept that we worked on that I want to write about and will have subsequent posts about a number of things such as other Docker clustering and scheduling projects, the ansible work that was done, the work we did to make this work on HP Cloud considering private and public IPv4 addresses, as well as more details on how to use ```confd``` which is a tool that I really had fun aquainting myself with.
 
 Stay tuned!
 
@@ -134,3 +136,5 @@ Stay tuned!
 [confd]: https://github.com/kelseyhightower/confd
 [golang]: http://golang.org
 [elkstack]: http://www.elasticsearch.org/webinars/elk-stack-devops-environment/ 
+[marcel_blog]: http://marceldegraaf.net/2014/05/05/coreos-follow-up-sinatra-logstash-elasticsearch-kibana.html
+[marcel_code]: https://github.com/marceldegraaf/blog-coreos-2
