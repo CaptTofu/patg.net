@@ -1,0 +1,29 @@
+---
+layout: post
+title: "DBD::mysql 4.029 Released"
+date: 2014-12-12 12:00:00
+categories: mysql,perl,DBI
+---
+
+Dear Perl and MySQL community,
+
+I'm pleased to announce the release of DBD::mysql 4.029
+
+From the changelog:
+
+* Added fix to tests to create test database if not exists (contstant failure on Travis) (CaptTofu)
+* Support the fraction of (Oracle) MySQL Fabric that is supported by the most recent Connector/C (Steffen Mueller smueller<at>cpan<dot>org
+* Statistics Info Milan Šorm <sorm<at>is4u<dot>cz> for work on statistics_info
+* Fix for RT 97625, use after free(), Reini Urban rurban<at>cpan<dot>org and Giovanni Bechis <giovanni<at>bigio<dot>snb<dot>it>
+
+Thanks to all who contributed!
+
+Patrick "CaptTofu" Galbraith
+
+Please feel free to visit:
+
+[CPAN DBD-mysql-4.029](http://search.cpan.org/~capttofu/DBD-mysql-4.029/)
+
+And as always:
+
+[Github repo](https://github.com/perl5-dbi/DBD-mysql.git)

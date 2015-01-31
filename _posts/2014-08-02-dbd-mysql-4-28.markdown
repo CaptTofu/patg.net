@@ -1,0 +1,26 @@
+---
+layout: post
+title: "DBD::mysql 4.028 Released"
+date: 2014-08-02 12:00:00
+categories: mysql,perl,DBI 
+---
+
+Dear Perl and MySQL community,
+
+I'm pleased to announce the release of DBD::mysql 4.028. This release includes several fixes, per change log:
+
+* Fixed bug in mysql.xs where dbh was being used as error code
+* RT #97570: fix wrong salloc free in mysql_st_internal_execute - (Reini Urban, cPanel)
+* Fix RT #97625 use-after-free in mysql_dr_error, and #86153 - (Reini Urban, cPanel)
+* find mysql.h for MariaDB on Win32 (Graham Ollis)
+* Update mysql.pm to work with ipv6 and ipv4 addresses (katyavoid)
+
+I want to thank Reini Urban, Graham Ollis, and Katyavoid for their pull requests and contributions to DBD::mysql!
+
+Please feel free to visit:
+
+[CPAN DBD-mysql-4.028](http://search.cpan.org/~capttofu/DBD-mysql-4.028/)
+
+And as always:
+
+[Github repo](https://github.com/perl5-dbi/DBD-mysql.git)
