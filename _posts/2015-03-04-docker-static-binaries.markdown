@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "CoreOS DNA on Debian"
+title: "Article: Contaienrs are the new static binaries"
 date: 2015-03-04 12:00:00 
 categories: docker,deployment,binaries
 ---
