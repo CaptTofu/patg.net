@@ -5,8 +5,6 @@ date: 2015-03-17 12:00:00
 categories: coreos,docker,vmware
 ---
 
-# CoreOS VMware Cluster Scripts
-
 The purpose of the simple [```coreos_cluster_vmware```](https://github.com/CaptTofu/coreos_cluster_vmware) repo is to provide simple scripts for building a CoreOS cluster using the methodology that Kelsey Hightower gave me insight into using the official VMware CoreOS image. 
 
 ## Inspiration
