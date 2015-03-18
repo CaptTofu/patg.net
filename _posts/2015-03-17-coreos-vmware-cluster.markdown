@@ -36,7 +36,7 @@ In the ```./bin``` directory:
 - ```teardown_nodes.sh``` - Stops and deletes the files for CoreOS node VMs
 - ```teardown_etcd.sh``` - Stops and deletes the files for the etcd VM 
 
-
+<br />
 ## Basic idea
 
 The basic idea is this - 
@@ -77,8 +77,7 @@ total 1036072
 -rw-r--r--  1 patg  staff  396820480 Mar 12 12:59 coreos_production_vmware_image.vmdk
 
 ```
-
-
+<br />
 ### Lanch the etcd VM
 
 ```
@@ -123,7 +122,7 @@ core@etcd ~ $ etcdctl ls --recursive
 /coreos.com/updateengine/rebootlock/semaphore
 ```
 
-
+<br />
 ### Launch the cluster
 
 Now the cluster can be launched. As the above example shows, the IP address for etcd is 192.168.1.24. This will be the single argument to the next script:
