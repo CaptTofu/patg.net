@@ -82,9 +82,17 @@ Creating hybrid image...
 ....
 ```
 
-This will lanch the etcd VM. A window will present itself with a dialog box "This virtual machine might have been moved or copied...". Select "I copied it".
+This will lanch the etcd VM. A window will present itself with a dialog box 
 
-You can then find out what the IP address of the Virtual Machine is either by looking at the output in the VM window or by running the following command:
+![etcd launch prompt]({{ site.url }}/assets/etcd_launch1.jpg)
+
+Select "I copied it".
+
+You can then find out what the IP address of the Virtual Machine is either by looking at the output in the VM window
+
+![etcd VM initial window]({{ site.url }}/assets/etcd_launch2.jpg)
+
+ or by running the following command:
 
 ```
 reason:work_dir patg$ sudo vmrun getGuestIPAddress etcd.vmx
