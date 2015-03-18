@@ -19,6 +19,7 @@ Four machines total:
 - 3 coreOS nodes that are using the single etcd node
 
 
+
 ## What is in this repo?
 
 In the base directory, there are "templates" for:
@@ -34,6 +35,7 @@ In the ```./bin``` directory:
 - ```build_nodes.sh``` - The script that is used to build configuration files for and to launch all three of the CoreOS node VMs
 - ```teardown_nodes.sh``` - Stops and deletes the files for CoreOS node VMs
 - ```teardown_etcd.sh``` - Stops and deletes the files for the etcd VM 
+
 
 ## Basic idea
 
@@ -75,6 +77,7 @@ total 1036072
 -rw-r--r--  1 patg  staff  396820480 Mar 12 12:59 coreos_production_vmware_image.vmdk
 
 ```
+
 
 ### Lanch the etcd VM
 
@@ -119,6 +122,7 @@ core@etcd ~ $ etcdctl ls --recursive
 /coreos.com/updateengine/rebootlock
 /coreos.com/updateengine/rebootlock/semaphore
 ```
+
 
 ### Launch the cluster
 
