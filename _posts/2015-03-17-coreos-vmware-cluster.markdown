@@ -7,7 +7,11 @@ categories: coreos,docker,vmware
 
 # CoreOS VMware Cluster Scripts
 
-The purpose of this project is to script the steps for building a CoreOS cluster using the methodology that Kelsey Hightower gave me insight into using the official VMware CoreOS image. 
+The purpose of the simple [```coreos_cluster_vmware```](https://github.com/CaptTofu/coreos_cluster_vmware) repo is to provide simple scripts for building a CoreOS cluster using the methodology that Kelsey Hightower gave me insight into using the official VMware CoreOS image. 
+
+## Inspiration
+
+There is an excellent [blog post](https://coreos.com/blog/vmware-vcloud-air-and-vsphere/) on CoreOS's blog by [Kelsey Hightower](https://github.com/kelseyhightower) about CoreOS on VMware Vspher and VMware vCloud Air that was the inspiration for this post. I simply wanted to automate the process and have a means of showing a working cluster, hence this blog post.
 
 ## What does this cluster consist of?
 
@@ -180,8 +184,6 @@ The cluster is now open for business!
 
 ## Summary
 
-This document has shown how to easily set up a CoreOS cluster, as well as how to do some useful work with the VMware command line tools. 
+This document has shown how to easily set up a CoreOS cluster, as well as how to do some useful work with the VMware command line tools. For more information, do join the ```#coreos``` IRC channel on Freenode, as well as the [documentation](https://coreos.com/docs/) on CoreOS's site.
 
-For more information, do join the ```#coreos``` IRC channel on Freenode, as well as the [documentation](https://coreos.com/docs/) on CoreOS's site.
-
-Lastly, many thanks to [Kelsey Hightower](https://github.com/kelseyhightower) for his patience and help with setting this up and answering a slew of questions!
+Lastly, many many thanks to [Kelsey Hightower](https://github.com/kelseyhightower) for his patience and help with setting this up and answering a slew of questions!
