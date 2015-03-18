@@ -61,7 +61,9 @@ When this utility is run, it will need to be run via ```sudo```, or you can chan
 
 ### Get the official VMware CoreOS image
 
-```../bin/get_image.sh```
+```
+../bin/get_image.sh
+```
 
 After this script is completed, there should be the image in the expected location ```../coreos_image```
 
