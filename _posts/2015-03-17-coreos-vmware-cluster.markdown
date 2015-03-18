@@ -64,7 +64,7 @@ When this utility is run, it will need to be run via ```sudo```, or you can chan
 
 
 ### Get the official VMware CoreOS image
-
+<br />
 ```
 ../bin/get_image.sh
 ```
@@ -80,7 +80,7 @@ total 1036072
 <br />
 <br />
 ### Lanch the etcd VM
-
+<br />
 ```
 reason:work_dir patg$ ../bin/build_etcd.sh 
 Creating hybrid image...
