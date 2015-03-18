@@ -78,6 +78,7 @@ total 1036072
 
 ```
 <br />
+<br />
 ### Lanch the etcd VM
 
 ```
@@ -122,6 +123,7 @@ core@etcd ~ $ etcdctl ls --recursive
 /coreos.com/updateengine/rebootlock/semaphore
 ```
 
+<br />
 <br />
 ### Launch the cluster
 
