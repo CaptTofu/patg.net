@@ -16,7 +16,7 @@ Four machines total:
 - 1 master
 - 3 minions
 
-
+<br />
 ## What is in this repo?
 
 In the base directory, there are "templates" for:
@@ -35,6 +35,7 @@ In the ```./bin``` directory:
 - ```start_master.sh``` - Starts the master after it has been stopped 
 - ```start_nodes.sh``` - Starts the nodes after they has been stopped 
 
+<br />
 ## Basic idea
 
 The basic idea is this - 
@@ -66,7 +67,7 @@ One way to make ```vmrun``` easier to run without a passwrod every time is to us
 username host = (root) NOPASSWD: /Applications/VMware\ Fusion.app/Contents/Library/vmrun
 ```
 
-
+<br />
 ### Get the official VMware CoreOS image
 
 
@@ -84,6 +85,7 @@ total 1036072
 
 ```
 
+<br />
 ### Lanch the master VM
 
 ```
@@ -127,6 +129,7 @@ core@master ~ $ etcdctl ls
 
 ```
 
+<br />
 ### Launch the minions 
 
 Now the minions can be launched. As the above example shows, the IP address for master (etcd) is 192.168.1.24. This will be the single argument to the next script:
@@ -248,7 +251,7 @@ core@master ~/kubernetes/examples/redis $
 
 ```
 
-
+<br />
 ## Summary
 
 This document has shown how to easily set up a Kubernetes cluster, as well as how to do some useful work with the VMware command line tools. For more information, do join the ```#coreos``` and ```#google-containers``` IRC channels on Freenode, as well as the [documentation in the Kubernetes project](https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides).
