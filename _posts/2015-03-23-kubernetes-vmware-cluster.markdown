@@ -5,8 +5,6 @@ date: 2015-03-23 12:00:00
 categories: kubernetes,coreos,docker,vmware
 ---
 
-# Kubernetes VMware Cluster Scripts
-
 The purpose of the simple [```kubernetes_cluster_vmware```](https://github.com/CaptTofu/kubernetes_cluster_vmware) repo is to provide simple scripts for building a CoreOS cluster using the methodology that Kelsey Hightower gave me insight into using the official VMware CoreOS image. I modified this process along with the information in the Kubernetes project for [provisioning a Kubernetes with a CoreOS Multi-node cluster](https://github.com/GoogleCloudPlatform/kubernetes/blob/master/docs/getting-started-guides/coreos/coreos_multinode_cluster.md). 
 
 This project builds on the [coreos_cluster_vmware project](https://github.com/CaptTofu/coreos_cluster_vmware), which is a good starting point to get a basic understanding for the process of putting together this Kubernetes cluster using the same essential process.
