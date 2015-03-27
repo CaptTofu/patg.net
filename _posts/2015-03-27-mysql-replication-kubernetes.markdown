@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Simpe MySQL replication example on Kubernetes"
+title: "Simple MySQL replication example on Kubernetes"
 date: 2015-03-27 12:00:00 
 categories: mysql,kubernetes,coreos,docker,vmware
 ---
