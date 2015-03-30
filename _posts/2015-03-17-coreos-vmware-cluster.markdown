@@ -56,11 +56,9 @@ There is a directory in the repo with nothing in it ```work_dir```. Enter that d
 
 ### Determine location of VMware CLI 
 
-You will need to find the utility ```vmlist```. On OSX Yosemite, this location should be ```/Applications/VMware Fusion.app/Contents/Library```. Set up the $PATH environment variable to have this in your path:
+You will need to find the utility ```vmrun```. On OSX Yosemite, this location should be ```/Applications/VMware Fusion.app/Contents/Library```. Set up the $PATH environment variable to have this in your path:
 
 ```export PATH=$PATH:/Applications/VMware\ Fusion.app/Contents/Library```
-
-When this utility is run, it will need to be run via ```sudo```, or you can change it to allow the user you use to have the execute privilege to it.
 
 
 ### Get the official VMware CoreOS image
@@ -87,29 +85,21 @@ Creating hybrid image...
 ....
 ```
 
-This will lanch the etcd VM. A window will present itself with a dialog box 
+This will lanch the etcd VM. 
 
-![etcd launch prompt]({{ site.url }}/assets/etcd_launch1.png)
-
-Select "I copied it".
-
-You can then find out what the IP address of the Virtual Machine is either by looking at the output in the VM window
-
-![etcd VM initial window]({{ site.url }}/assets/etcd_launch2.png)
-
- or by running the following command:
+You can then find out what the IP address of the Virtual Machine is by running the following command:
 
 ```
 reason:work_dir patg$ sudo vmrun getGuestIPAddress etcd.vmx
-192.168.1.24
+172.16.230.132
 ```
 
 Log into the instance. The password that was set from the cloud init data file ```etcd_clout_init.yaml``` results in the VM having a password for both the core and root user of "vmware" (NOTE: this is not for production, obviously!)
 
 ```
-reason:work_dir patg$ ssh core@192.168.1.24
-Warning: Permanently added '192.168.1.24' (RSA) to the list of known hosts.
-core@192.168.1.24's password: 
+reason:work_dir patg$ ssh core@172.16.230.132
+Warning: Permanently added '172.16.230.132' (RSA) to the list of known hosts.
+core@172.16.230.132's password: 
 CoreOS alpha (618.0.0)
 ```
 
@@ -127,10 +117,10 @@ core@etcd ~ $ etcdctl ls --recursive
 <br />
 ### Launch the cluster
 
-Now the cluster can be launched. As the above example shows, the IP address for etcd is 192.168.1.24. This will be the single argument to the next script:
+Now the cluster can be launched. As the above example shows, the IP address for etcd is 172.16.230.132. This will be the single argument to the next script:
 
 ```
-reason:work_dir patg$ ../bin/build_nodes.sh 192.168.1.24
+reason:work_dir patg$ ../bin/build_nodes.sh 172.16.230.132
 ```
 
 This will result in the same sequence of steps as the etcd server, but 3 times. Once all VMs are launched, you can verify that they are up:
@@ -147,20 +137,20 @@ Total running VMs: 5
 Next, pick one of the nodes to log into:
 
 ```
-reason:work_dir patg$ ssh core@192.168.1.27
-Warning: Permanently added '192.168.1.27' (RSA) to the list of known hosts.
-core@192.168.1.27's password: 
+reason:work_dir patg$ ssh core@172.16.230.135
+Warning: Permanently added '172.16.230.135' (RSA) to the list of known hosts.
+core@172.16.230.135's password: 
 CoreOS alpha (618.0.0)
 ```
 
-Test that everything is working:
+Test that everything is working by running ```fleetctl```. The endpoint to the etcd server at 172.16.230.132, running on port 4001 will need to be specified:
 
 ```
-core@core_03 ~ $ fleetctl --endpoint=http://192.168.1.24:4001 list-machines
+core@core_03 ~ $ fleetctl --endpoint=http://172.16.230.132:4001 list-machines
 MACHINE		IP		METADATA
-11cf48ee...	192.168.1.26	role=node
-6b196b24...	192.168.1.25	role=node
-8203d85a...	192.168.1.27	role=node
+11cf48ee...	172.16.230.134	role=node
+6b196b24...	172.16.230.133	role=node
+8203d85a...	172.16.230.135	role=node
 ```
 
 Excellent! A working cluster! Next, create a test service and launch it. In this example, the "hello" service shown on [Core OS Quickstart](https://coreos.com/docs/quickstart/)
@@ -168,19 +158,19 @@ Excellent! A working cluster! Next, create a test service and launch it. In this
 Once the service is created as a file with the editor of choice, submit it and run it. Additionally, export the environment variable ```FLEETCTL_ENDPOINT``` to make submission not require it explicitely:
 
 ```
-core@core_03 ~ $ export FLEETCTL_ENDPOINT=http://192.168.1.24:4001
+core@core_03 ~ $ export FLEETCTL_ENDPOINT=http://172.16.230.132:4001
 core@core_03 ~ $ fleetctl submit hello.service 
 core@core_03 ~ $ fleetctl list-unit-files
 UNIT		HASH	DSTATE		STATE		TARGET
 hello.service	0d1c468	inactive	inactive	-
 core@core_03 ~ $ fleetctl start hello          
-Unit hello.service launched on 11cf48ee.../192.168.1.26
+Unit hello.service launched on 11cf48ee.../172.16.230.134
 core@core_03 ~ $ fleetctl list-units
 UNIT		MACHINE				ACTIVE		SUB
-hello.service	11cf48ee.../192.168.1.26	activating	start-pre
+hello.service	11cf48ee.../172.16.230.134	activating	start-pre
 core@core_03 ~ $ fleetctl list-units
 UNIT		MACHINE				ACTIVE	SUB
-hello.service	11cf48ee.../192.168.1.26	active	running
+hello.service	11cf48ee.../172.16.230.134	active	running
 ```
 
 The cluster is now open for business!

@@ -13,8 +13,8 @@ This project builds on the [coreos_cluster_vmware project](https://github.com/Ca
 
 Four machines total:
 
-- 1 master
-- 3 minions
+- 1 master (with gui)
+- 3 minions (headless)
 
 <br />
 ## What is in this repo?
@@ -59,14 +59,6 @@ You will need to find the utility ```vmlist```. On OSX Yosemite, this location s
 
 ```export PATH=$PATH:/Applications/VMware\ Fusion.app/Contents/Library```
 
-When this utility is run, it will need to be run via ```sudo```, or you can change it to allow the user you use to have the execute privilege to it.
-
-One way to make ```vmrun``` easier to run without a passwrod every time is to use sudoers:
-
-```
-username host = (root) NOPASSWD: /Applications/VMware\ Fusion.app/Contents/Library/vmrun
-```
-
 <br />
 ### Get the official VMware CoreOS image
 
@@ -94,29 +86,20 @@ Creating hybrid image...
 ....
 ```
 
-This will lanch the master VM. A window will present itself with a dialog box 
+This will lanch the master VM. You can then find out what the IP address of the Virtual Machine by running the following command:
 
-![master launch prompt](http://patg.net/assets/etcd_launch1.png)
-
-Select "I copied it".
-
-You can then find out what the IP address of the Virtual Machine is either by looking at the output in the VM window
-
-![master VM initial window](http://patg.net/assets/etcd_launch2.png)
-
- or by running the following command:
 
 ```
-reason:work_dir patg$ sudo vmrun getGuestIPAddress master.vmx
-192.168.1.24
+reason:work_dir patg$ vmrun getGuestIPAddress master.vmx
+172.16.230.132
 ```
 
-Log into the instance. The password that was set from the cloud init data file ```master_cloud_init.yaml``` results in the VM having a password for both the core and root user of "vmware" (NOTE: this is not for production, obviously!)
+Log into the instance. The password that was set from the cloud init data file ```master_cloud_init.yaml``` results in the VM having a password for both the core and root user of "vmware" (NOTE: this is not for production, obviously, so you will want to change it prior!)
 
 ```
-reason:work_dir patg$ ssh core@192.168.1.24
-Warning: Permanently added '192.168.1.24' (RSA) to the list of known hosts.
-core@192.168.1.24's password: 
+reason:work_dir patg$ ssh core@172.16.230.132
+Warning: Permanently added '172.16.230.132' (RSA) to the list of known hosts.
+core@172.16.230.132's password: 
 CoreOS alpha (618.0.0)
 ```
 
@@ -132,10 +115,10 @@ core@master ~ $ etcdctl ls
 <br />
 ### Launch the minions 
 
-Now the minions can be launched. As the above example shows, the IP address for master (etcd) is 192.168.1.24. This will be the single argument to the next script:
+Now the minions can be launched. As the above example shows, the IP address for master (etcd) is 172.16.230.132. This will be the single argument to the next script:
 
 ```
-reason:work_dir patg$ ../bin/build_nodes.sh 192.168.1.24
+reason:work_dir patg$ ../bin/build_nodes.sh 172.16.230.132
 ```
 
 This will result in the same sequence of steps as the master, but 3 times. Once all VMs are launched, you can verify that they are up:
@@ -149,58 +132,51 @@ Total running VMs: 4
 /Users/patg/code/kubernetes_cluster_vmware/work_dir/node_03.vmx
 ```
 
-Next, pick one of the nodes to log into:
+Now that everything is running, copy ```kubectl``` to the master VM:
+
 
 ```
-reason:work_dir patg$ ssh core@192.168.1.27
-Warning: Permanently added '192.168.1.27' (RSA) to the list of known hosts.
-core@192.168.1.27's password: 
+reason:work_dir patg$ scp ../kubectl core@172.16.230.132:~/
+core@172.16.230.132's password: 
+kubectl             100%   13MB  13.2MB/s   00:00    
+```
+
+
+Log into the master and copy ```kubectl``` to ```/opt/bin```:
+
+
+```
+reason:work_dir patg$ ssh core@172.16.230.132
+core@172.16.230.132's password: 
 CoreOS alpha (618.0.0)
-```
-
-Test that everything is working:
-
-```
-core@node_03 ~ $ fleetctl --endpoint=http://192.168.1.24:4001 list-machines
-MACHINE     IP      METADATA
-0bd560c9... 192.168.1.24 role=master
-10a1d3c3... 192.168.1.12 role=node
-50a0dd1c... 192.168.1.10 role=node
-9bd07cf8... 192.168.1.9  role=node
-
-```
-
-Excellent! A working coreos cluster! Now, verify that Kubernetes is working. 
-
-First, copy ```kubectl``` to the master VM:
-
-```
-reason:work_dir patg$ scp ../kubectl core@192.168.1.24:~/
-core@192.168.1.24's password: 
-kubectl                                                                                                               100%   13MB  13.2MB/s   00:00    
-```
-
-Log into the master, copy ```kubectl``` to ```/opt/bin```:
-
-```
-reason:work_dir patg$ ssh core@192.168.1.24
-core@192.168.1.24's password: 
-Last login: Sun Mar 22 14:07:24 2015 from 192.168.1.5
-CoreOS alpha (618.0.0)
-
-Update Strategy: No Reboots
 
 core@master ~ $ sudo mv kubectl /opt/bin
 ```
 
-Now, list minions:
+Test that everything is working with the base coreos setup (using ```fleetctl```):
+
+
+```
+core@node_03 ~ $ fleetctl --endpoint=http://172.16.230.132:4001 list-machines
+MACHINE     IP      METADATA
+0bd560c9... 172.16.230.132 role=master
+10a1d3c3... 172.16.230.133 role=node
+50a0dd1c... 172.16.230.134 role=node
+9bd07cf8... 172.16.230.135 role=node
+
+```
+
+Excellent! A working coreos cluster! This also will give you the IP addresses of the minions - make a note.
+
+Now, verify that Kubernetes is working, and list the minions:
+
 
 ```
 core@master ~ $ kubectl get minions 
 NAME                LABELS              STATUS
-192.168.1.10        <none>              Ready
-192.168.1.12        <none>              Ready
-192.168.1.9         <none>              Ready
+172.16.230.134      <none>              Ready
+172.16.230.133      <none>              Ready
+172.16.230.135      <none>              Ready
 ```
 
 The Kubernetes cluster is now open for business!
@@ -240,8 +216,9 @@ redis-sentinel      name=sentinel,role=service                redis-sentinel=tru
 
 core@master ~/kubernetes/examples/redis $ kubectl get pods    
 POD                 IP                  CONTAINER(S)        IMAGE(S)              HOST                      LABELS                                       STATUS
-redis-master        10.244.89.2         master              kubernetes/redis:v1   192.168.1.9/192.168.1.9   name=redis,redis-sentinel=true,role=master   Pending
+redis-master        10.244.89.2         master              kubernetes/redis:v1   172.16.230.134/172.16.230.134   name=redis,redis-sentinel=true,role=master   Pending
                                         sentinel            kubernetes/redis:v1                                                                          
+
 
 core@master ~/kubernetes/examples/redis $ kubectl get rc
 CONTROLLER          CONTAINER(S)        IMAGE(S)              SELECTOR              REPLICAS
