@@ -24,4 +24,5 @@ mysql> show status like 'wsrep_incoming_addresses';
 
 ```
 
+
 I will post details about this in an upcoming post!
