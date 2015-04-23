@@ -77,8 +77,7 @@ kubernetes $ make
 kubernetes $ sudo cp cmd/kubectl /usr/local/bin
 
 ```
-
-
+<br />
 ### Clone the kubernetes mysql replication repository
 
 
@@ -88,8 +87,7 @@ $ cd mysql_replication_kubernetes
 mysql_replication_kubernetes $ git submodule init
 mysql_replication_kubernetes $ git submodule update
 ```
-
-
+<br />
 ### Create pxc_01 pod
 
 ```
@@ -97,8 +95,7 @@ mysql_replication_kubernetes $ cd galera_sync_replication
 galera_sync_replication $ kubectl create -f pxc-node1.yaml 
 pxc-node1
 ```
-
-
+<br />
 ### Verify pod is running
 
 ```
@@ -109,7 +106,7 @@ pxc-node1           10.244.78.2         pxc-node1           capttofu/percona_xtr
 ```
 
 In the example above, the status is ```Pending```. Once the status is ```Running```, create the second pod
-
+<br />
 ### Create pxc-node2 and pxc-node3 pod
 
 Once pxc_node1 has a status of ```Running```, create pxc_node2 and pxc_node3:
@@ -120,7 +117,7 @@ pxc-node2
 galera_sync_replication $ kubectl create -f pxc-node3.yaml 
 pxc-node3
 ```
-
+<br />
 ### Create a service for pxc-node1
 
 From before, recall that pxc-node1 is running on the kubernetes minion/node with an IP address of 172.16.230.131. Edit the configuration file for pxc_node1 service to make it possible to connect to the pxc_node1 pod using that address with ```publicIPs```. Edit pxc-node1-service.yaml:
@@ -146,8 +143,7 @@ Once this file is ready, create the service
 galera_sync_replication $ kubectl create -f pxc-node3.yaml 
 pxc-node3
 ```
-
-
+<br />
 ### Verify everything is running
 
 There should be all three pods running (status ```Running```) and a single pxc_node1 service:
