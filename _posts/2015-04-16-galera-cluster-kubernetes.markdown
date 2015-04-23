@@ -5,7 +5,6 @@ date: 2015-04-21 12:00:00
 categories: galera,percona,kubernetes,coreos,docker,vmware
 ---
 
-## Running a Galera Cluster on Kubernetes
 
 I recently gave a presentation at [Percona Live 2015](http://www.percona.com/live/mysql-conference-2015/) in Santa Clara, CA. In this presentaiton I originally wanted to simply show running MySQL replication, first asynchronous, and more importantly, a Galera cluster, and in so doing, demonstrate how useful [Kubernetes][Kubernetes] is. 
 
