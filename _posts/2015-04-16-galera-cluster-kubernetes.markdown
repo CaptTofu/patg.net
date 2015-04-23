@@ -78,7 +78,9 @@ kubernetes $ sudo cp cmd/kubectl /usr/local/bin
 
 ```
 
+
 ### Clone the kubernetes mysql replication repository
+
 
 ```
 $ git clone https://github.com/CaptTofu/mysql_replication_kubernetes.git
@@ -87,6 +89,7 @@ mysql_replication_kubernetes $ git submodule init
 mysql_replication_kubernetes $ git submodule update
 ```
 
+
 ### Create pxc_01 pod
 
 ```
@@ -94,6 +97,7 @@ mysql_replication_kubernetes $ cd galera_sync_replication
 galera_sync_replication $ kubectl create -f pxc-node1.yaml 
 pxc-node1
 ```
+
 
 ### Verify pod is running
 
@@ -143,6 +147,7 @@ galera_sync_replication $ kubectl create -f pxc-node3.yaml
 pxc-node3
 ```
 
+
 ### Verify everything is running
 
 There should be all three pods running (status ```Running```) and a single pxc_node1 service:
@@ -160,6 +165,7 @@ pxc-node1           name=pxc-node1                            name=pxc-node1    
 ```
 
 The output above shows that everything is up and running-- time to connect to the database!
+
 
 ### Access ```pxc-node1``` service
 
