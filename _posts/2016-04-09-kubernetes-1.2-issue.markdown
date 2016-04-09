@@ -36,6 +36,7 @@ The binaries are copied over to the minion VMs and restarted (kube-proxy and kub
 
 
 
+
 ## Cure to side-effects of original cure
 
 Not as bad as statin drug side-effects, but something that had to be fixed. The cause is that Kubernetes does a check for whether the memory cgroup is mounted. Looking at the source (Use the source!) [line 128 of container manager in Kubernetes](https://github.com/kubernetes/kubernetes/blob/master/pkg/kubelet/cm/container_manager_linux.go#L128).
