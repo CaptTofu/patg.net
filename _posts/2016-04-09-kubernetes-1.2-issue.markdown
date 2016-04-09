@@ -13,18 +13,18 @@ Of course it's Saturday (what else is there to do?!), and there is a little over
 
 ## Initial problem
 
-So, when trying to run my [kubernetes cluster][kubernetes_blog_post], when I ran 
+So, when trying to run my [kubernetes cluster][kubernetes_blog_post], when running the following: 
 
     patg@kubernetes-master001:~$ ./kubectl exec pxc-node2-hjjrw -i -t -- mysql -u root -p -h pxc-cluster
     Content-Type specified (plain/text) must be 'application/json'
 
-Normally, this would bring me into an active MySQL client session.
+Normally, this would bring me into an active MySQL client session. Instead, it would just hang. Figures. It worked a week ago, I swear!
 
 ## Diagnosis and side-effect of cure
 
-A bit of searching, seems it's something that Docker changed in the client API and requires a new [kubernetes][kubernetes] version. The version I have is 1.0.6. I try 1.1.1. Still, no go. So I try the latest 1.2.
+A bit of searching, seems it's something that Docker changed in the client API recently (1.22) and requires a new [kubernetes][kubernetes] version. The version that originally broke was 1.0.6. An upgrade to 1.1.1. Still, no go. So finally, and upgraded to the latest 1.2.
 
-The build script is useful:
+The build script is useful for building binaries for Debian-based systems which I then build into debian packages:
 
     ~/kubernetes/cluster/ubuntu$ export KUBE_VERSION=1.2.2
     ~/kubernetes/cluster/ubuntu$ ./build.sh 
