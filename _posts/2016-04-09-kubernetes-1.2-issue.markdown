@@ -4,7 +4,6 @@ title: "Pre-conference preparation breakage"
 date: 2016-04-09 12:00:00 
 categories: kubernetes,ubuntu,cgroups,docker
 ---
-# Pre-conference preparation breakage
 
 Just a quick post to help others who get stuck on the problem I solved today that could save a lot of time!
 
