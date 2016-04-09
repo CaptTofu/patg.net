@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Galera on Kubernetes Example now merged"
+title: "Pre-conference preparation breakage"
 date: 2016-04-09 12:00:00 
 categories: kubernetes,ubuntu,cgroups,docker
 ---
