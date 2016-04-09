@@ -20,6 +20,7 @@ So, when trying to run my [kubernetes cluster][kubernetes_blog_post], when runni
 
 Normally, this would bring me into an active MySQL client session. Instead, it would just hang. Figures. It worked a week ago, I swear!
 
+
 ## Diagnosis and side-effect of cure
 
 A bit of searching, seems it's something that Docker changed in the client API recently (1.22) and requires a new [kubernetes][kubernetes] version. The version that originally broke was 1.0.6. An upgrade to 1.1.1. Still, no go. So finally, and upgraded to the latest 1.2.
@@ -32,6 +33,8 @@ The build script is useful for building binaries for Debian-based systems which 
 The binaries are copied over to the minion VMs and restarted (kube-proxy and kubelet). They are not registering with the master, so the journal shows:
 
     Apr 09 11:03:52 kubernetes-minion003 kubelet[13645]: I0409 11:03:52.213704   13645 kubelet.go:2365] skipping pod synchronization - [Failed to start ContainerManager system validation failed - Following Cgroup subsystem not mounted: [memory]]
+
+
 
 ## Cure to side-effects of original cure
 
