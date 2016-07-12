@@ -5,12 +5,12 @@ date: 2016-07-12 12:00:00
 categories: kubernetes,coreos
 ---
 
-I'm please to announce publicly available Fleet Unit Files for launching a multi-node Kubernetes cluster on CoreOS, [kubernetes-cluster-fleet](https://github.com/CaptTofu/kubernetes-cluster-fleet)
+I'm pleased to announce publicly available Fleet Unit Files for launching a multi-node Kubernetes cluster on CoreOS, [kubernetes-cluster-fleet](https://github.com/CaptTofu/kubernetes-cluster-fleet)
 
 
 ## Background 
 
-I have run Kubernetes in any number of ways, particularly using Ansible to set it up,  but was recently wanting to see if it was possible to run Kubernetes completely using Fleet unit files on CoreoS, and after a lot of trial and error and bash duct tape, indeed possible, hence my repository [https://github.com/CaptTofu/kubernetes-cluster-fleet](https://github.com/CaptTofu/kubernetes-cluster-fleet)
+I have run Kubernetes in any number of ways, particularly using Ansible to set it up,  but was recently wanting to see if it was possible to run Kubernetes completely using Fleet unit files on CoreoS-- across multiple machines, something I haven't found a solution for thus far (some single-machine projects). After a lot of trial and error and bash duct tape, it is indeed possible, hence my repository [https://github.com/CaptTofu/kubernetes-cluster-fleet](https://github.com/CaptTofu/kubernetes-cluster-fleet)
 
 ## Basic idea
 
