@@ -10,7 +10,7 @@ I'm pleased to announce publicly available Fleet Unit Files for launching a mult
 
 ## Background 
 
-I have run Kubernetes in any number of ways, particularly using Ansible to set it up,  but was recently wanting to see if it was possible to run Kubernetes completely using Fleet unit files on CoreoS-- across multiple machines, something I haven't found a solution for thus far (some single-machine projects). After a lot of trial and error and bash duct tape, it is indeed possible, hence my repository [https://github.com/CaptTofu/kubernetes-cluster-fleet](https://github.com/CaptTofu/kubernetes-cluster-fleet)
+I have run [Kubernetes][kubernetes] in any number of ways, particularly using Ansible to set it up,  but was recently wanting to see if it was possible to run Kubernetes completely using Fleet unit files on CoreoS-- across multiple machines, something I haven't found a solution for thus far other than some unit files that run Kubernetes on a single-machine. After a lot of trial and error and bash duct tape, it is indeed possible, hence my repository [https://github.com/CaptTofu/kubernetes-cluster-fleet](https://github.com/CaptTofu/kubernetes-cluster-fleet)
 
 ## Basic idea
 
