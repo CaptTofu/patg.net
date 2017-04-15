@@ -11,15 +11,17 @@ categories: percona,mysql,kubernetes,helm
 
 I'm happy to see that my pull request was approved. Pretty simply, it was a Percona Chart. We needed the setup at HPE for our cluster and it was a good excuse to put together a chart, so there ya go!
 
+To use it, simply run ```helm install --name my-release stable/percona```
+
 ## What is a Helm chart?
 
 Well, for those that don't know, some prerequisite questions:
 
-### What is [Helm](https://github.com/kubernets/helm)?
+### What is [Helm](https://github.com/kubernetes/helm)?
 
 Helm is a package manager for Kubernetes, these packages called "[charts](https://github.com/kubernetes/charts)"
 
-### What is [Kubernetes](https://github.com/kubernetes)?
+### What is [Kubernetes](https://github.com/kubernetes/kubernetes)?
 
 Kubernetes is an open-sourced system for managing containerized applications across multiple hosts
 
