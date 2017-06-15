@@ -1,6 +1,6 @@
 name: patg.net 
 #markdown: redcarpet
-pygments: true
+#pygments: true
 #baseurl: /
 permalink: pretty
 paginate: 10
