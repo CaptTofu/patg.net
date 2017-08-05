@@ -1,0 +1,50 @@
+---
+layout: post
+title: "HAProxy Tip"
+date: 2017-07-04 12:00:00 
+categories: haproxy,apache
+---
+
+
+
+## Question: how do I have [HAProxy](http://www.haproxy.org/) redirect to another site and preserve the full URL?
+
+I've been thinking: sometimes I feel that in order to post to my blog, it has to be significant. This runs contrary to the whole idea of "release early, release often" ideal in terms of documentation. Why not just post findings when they're fresh in my mind? Here goes.
+
+Today, I had a client who needed one site redirect another site and retain the full URL on the web front-end, which uses [HAProxy](http://www.haproxy.org/). The existing redirects would do this for other sites, but would redirect to the front page and if whatever the full URL was that was acccessed was lost.
+
+It was a pretty simple problem to solve, but not a lot of examples out there that were more complex. 
+
+## First things first 
+
+When you test front-end proxy changes, disable your browswer's cache! In Chrome, this is done with Dev tools->Network->check "Disable cache". Yes, I know, that seems obvious, but shift reload doesn't work well nor is convenient when you cut-n-paste a URL from some other application or email to test your changes.
+
+Also, have a test proxy that you spin up to make changes on and use ```/etc/hosts``` to have it respond as the front-end web proxy.
+
+### Original rules in HAProxy 
+
+The original rule went to a subdirectory on the main site, but this needed to be changed to have it go to a completely different site
+
+    acl is_somesite hdr(host) -i somesite.com
+    redirect code 301 location http://www.mainsite.com/somesite/ if is_somesite
+
+It now needed instead to go from ```http://somesite.com/path?query_string``` to ```http://anothersite.com/path?query_string```. The former rule didn't work as:
+
+    redirect code 301 location http://www.anothersite.com if is_somesite
+
+And would obviously go, regardless of the full URI, to ```http://www.anothersite.com```
+
+After searching, reading the manual, and specifically for the version being used, this did the trick:
+
+   acl is_somesite hdr_end(host) -i somesite.com
+   http-request redirect code 301 location http://www.anothersite.com%[capture.req.uri] if is_somesite
+
+Note the use of ```hdr_end(host)```. The reason for this is it takes care of any subdomain and the main domain. Also, ```%[capture.req.uri]``` is the real magic for ensuring the full URL is carried over. 
+
+For the most recent version of HAProxy (7.0), it would be ```req.uri``` versus ```capture.req.uri```
+
+### Summary
+
+So, there it is. Hopefully this will help others save time.
+
+More on [redirection with HAProxy](https://www.haproxy.com/doc/aloha/7.0/haproxy/http_redirection.html)
