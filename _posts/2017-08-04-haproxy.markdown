@@ -17,7 +17,7 @@ It was a pretty simple problem to solve, but not a lot of examples out there tha
 
 ## First things first 
 
-When you test front-end proxy changes, disable your browswer's cache! In Chrome, this is done with Dev tools->Network->check "Disable cache". Yes, I know, that seems obvious, but shift reload doesn't work well nor is convenient when you cut-n-paste a URL from some other application or email to test your changes.
+When you test front-end proxy changes, disable your browswer's cache! In Chrome, this is done with Dev tools->Network->check "Disable cache". Other browswers can also have their cache disabled. Yes, I know, that seems obvious, but shift reload doesn't work well nor is convenient when you cut-n-paste a URL from some other application or email to test your changes or have to explicitely clear it.
 
 Also, have a test proxy that you spin up to make changes on and use ```/etc/hosts``` to have it respond as the front-end web proxy.
 
