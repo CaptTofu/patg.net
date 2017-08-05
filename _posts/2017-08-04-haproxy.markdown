@@ -36,8 +36,9 @@ And would obviously go, regardless of the full URI, to ```http://www.anothersite
 
 After searching, reading the manual, and specifically for the version being used, this did the trick:
 
-   acl is_somesite hdr_end(host) -i somesite.com
-   http-request redirect code 301 location http://www.anothersite.com%[capture.req.uri] if is_somesite
+
+    acl is_somesite hdr_end(host) -i somesite.com
+    http-request redirect code 301 location http://www.anothersite.com%[capture.req.uri] if is_somesite
 
 Note the use of ```hdr_end(host)```. The reason for this is it takes care of any subdomain and the main domain. Also, ```%[capture.req.uri]``` is the real magic for ensuring the full URL is carried over. 
 
