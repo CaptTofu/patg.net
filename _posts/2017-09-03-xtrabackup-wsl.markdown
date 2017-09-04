@@ -13,7 +13,7 @@ I had a recurring consultation this summer with a client who is running a stand-
 
 I haven't worked on Windows in years, and had assumed there were binaries for XtraBackup, but as with so many things with Windows, there are a million assumptions I had made prior that I have learned the hard way throughout the summer. 
 
-I did find Vadim's excellent [article](https://www.percona.com/blog/2017/03/20/running-percona-xtrabackup-windows-docker/) using a Docker container to run a container with XtraBackup, and bind mounts of both the datadir and the backup directory so the container can run a backup and have the backup show up on the host where specified in the arguments. This is certainly the way I gravitate to as I find containers a great solution to so many problems. However, again, I mentioned the client wanted something that isn't perceived to be to experimental.
+I did find Vadim's excellent [article](https://www.percona.com/blog/2017/03/20/running-percona-xtrabackup-windows-docker/) using a Docker container to run a container with XtraBackup, and bind mounts of both the datadir and the backup directory so the container can run a backup and have the backup show up on the host where specified in the arguments. This is certainly the way I gravitate to as I find containers a great solution to so many problems. However, again, I mentioned the client wanted something that isn't perceived to be to experimental, so I wanted to explore using something that was "part" of Windows.
 
 ## WSL: Windows Subsystem for Linux
 
@@ -23,21 +23,25 @@ I had always known that Windows had this idea of a base kernel with subsytems, b
 
 WSL was an effort inside of Microsoft researching real time translation of Linux system calls into Windows OS system calls, and derived from their work in working with [Android apps to run on Windows 10 Mobile](https://arstechnica.com/information-technology/2016/04/why-microsoft-needed-to-make-windows-run-linux-software/).
 
-## What is WSL really, in terms of how it runs and what one can do with it? 
+## What is WSL really?
 
-### WSL is not CygWin nor MinGW. 
+Throughout the years, there have been a number of ways to run "unix" or posix commands on Windows with some sort of bash shell for those who are Linux people to get by when working on Windows. WSL is much more than that though. 
+
+#### WSL is not CygWin nor MinGW. 
+
 Those are great tools, but not a complete subsystem like WSL that integrates into the Windows OS
 
-### WSL is not a container nor VM running Linux
+#### WSL is not a container nor VM running Linux
 
-WSL is part of the OS, a subsystem just like Windows itself
+WSL is part of the OS, a subsystem just like Windows itself and equal footing and not just an accessory program
 
-### WSL is currently like having Ubuntu on Windows
+#### WSL is currently like having Ubuntu on Windows
 
-When you run WSL, you have an Ubuntu installation you can do all the same things for the most part you would if you  
-were running on a VM or bare metal. There consists a regular Linux file system with Windows fixed drives mounted as ```/mnt/<drive letter>``` so that you have access to you Windows files as well.
+When you run WSL, you have an Ubuntu installation you can do all the same things for the most part you would if you were running on a VM or bare metal. 
 
-It's also an excellent development platform as now you can develop both for Windows or Linux.
+On WSL, there exists a regular Linux file system with Windows fixed drives mounted as ```/mnt/<drive letter>``` so that you have access to you Windows files as well.
+
+It's also an excellent development platform as now one can develop both for Windows or Linux.
 
 ## Using WSL
 
