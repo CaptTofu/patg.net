@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Running XtraBackup on Windows using WSL""
+title: "Running XtraBackup on Windows using WSL"
 date: 2017-09-03 12:00:00 
 categories: mysql,windows 10,wsl,backups
 ---
@@ -89,4 +89,4 @@ So, with a running MySQL instance and a place to create backups, XtraBackup can 
 
 And That's it! Now you can have yet another way to back up MySQL on Windows!
 
-![xtrabackup wsl](/assets/wsl4.
+![xtrabackup wsl](/assets/wsl4.PNG)
