@@ -73,7 +73,7 @@ Query id: 3b587b74-4803-48e1-9492-13042794de55
 infra.cs342cloud.internal :) 
 ```
 
-Now, create a table on the server with this data:
+Now, insert the data from S3 into a table on the server with this data:
 
 ```
 
